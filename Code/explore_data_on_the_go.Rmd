@@ -1,0 +1,368 @@
+---
+title: "Explorative plots for Covid19-Shopping study. Data collection began at 26.03.2020"
+author: "Aniko Maraz"
+date: "4/22/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#######################################################
+## packages and version setup
+#######################################################
+
+# ensure version compatibility
+# library(checkpoint)
+# checkpoint("2020-04-15")
+
+## set up packages
+packages <- c("tidyverse", "reshape2", "scales", "RColorBrewer", 
+              # "cowplot", 
+              "ggpubr")
+
+# write a function to load (and/or install) packages with feedback of success
+load_my_packages <- function(package){
+  new.package <- packages[!(package %in% installed.packages()[, "Package"])]
+  if (length(new.package)) 
+    install.packages(new.package, dependencies = TRUE)
+  sapply(package, require, character.only = TRUE)
+}
+
+# load my packages
+load_my_packages(packages)
+
+
+#######################################################
+## read data 
+#######################################################
+data_shoppingCovid19 <- read_rds(path="../Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
+dim(data_shoppingCovid19)
+
+```
+```{r data_clean_descr, echo=F, eval=T}
+# read raw data
+raw_shoppingCovid19 <- read.csv2("../Data/survey_shopCovid_200429.csv", sep=";")
+dim(raw_shoppingCovid19) -> data_read_in
+
+# delete test cases
+test_cases <- "cleanSunBearXXX8rLbOARl9iNgo9YOvPZK4xptF8rbCyRCTGZeHL8-MXLiyIMEF"
+raw_shoppingCovid19 <- raw_shoppingCovid19[raw_shoppingCovid19$session != test_cases, ]
+
+# check N
+dim(raw_shoppingCovid19) -> data_no_test_cases
+
+# delete incomplete cases
+raw_shoppingCovid19 <- raw_shoppingCovid19[!is.na(raw_shoppingCovid19$age2), ] # $age2 was the last variable in the dataset
+
+# check N
+dim(raw_shoppingCovid19) -> data_no_incomplete
+
+# disregard missing data on attention_check_1, because this was not an obligatory item (take it as 0)
+raw_shoppingCovid19$attention_check_1_noNA <- replace_na(raw_shoppingCovid19$attention_check_1, 5)
+
+# calculate correct answers on the 4 attention check items (3 + age asked twice)
+raw_shoppingCovid19 <- mutate(raw_shoppingCovid19, 
+                              attention_check_correct = 
+                                (attention_check_1_noNA == "5") + (attention_check_2 == "1") + (attention_check_3 == "2") +
+                                (age == age2) + (age == age2 +1) + (age == age2 -1))
+
+# create an error variable
+raw_shoppingCovid19 <- mutate(raw_shoppingCovid19, 
+                                                    attention_check_error = (4 - attention_check_correct))
+
+# exclude those with more than 1 errors
+raw_shoppingCovid19 <- raw_shoppingCovid19[raw_shoppingCovid19$attention_check_error < 2, ]
+
+dim(raw_shoppingCovid19) -> data_no_excess_errors
+
+
+## summary of cleaning and final data
+
+excluded_data <- list(
+  "raw data read in (rows=N, columns=variables)" = data_read_in, 
+  "data without the test cases" = data_no_test_cases[[1]], 
+  "data without incomplete cases (on age2)" = data_no_incomplete[[1]], 
+  "data without participants making too many errors (>1)" = data_no_excess_errors[[1]])
+excluded_data
+
+
+# descriptive stats
+socio_demographics <- 
+  list(
+"Age" = table(data_shoppingCovid19$age), 
+"Age mean" = mean(data_shoppingCovid19$age, na.rm=T), 
+"Age SD" = sd(data_shoppingCovid19$age, na.rm = T), 
+"Gender, where 1=female, 2=male, 3=other, 4=do not want to tell" = round(prop.table(table(data_shoppingCovid19$gender))*100, 2), 
+"Education highest, where 0=elementary/noFormal, 1=primary, 2=secondary/high, 3=college, 4=undergrad, 5=grad, 6=phd/mba" = 
+  table(data_shoppingCovid19$edu_highest),
+"Education highest %, where 0=elementary/noFormal, 1=primary, 2=secondary/high, 3=college, 4=undergrad, 5=grad, 6=phd/mba" = 
+  round(prop.table(table(data_shoppingCovid19$edu_highest))*100, 2),
+"State" = table(data_shoppingCovid19$state), 
+"Work status, where 1=full-time, 2=part-time, 3=less than PT, 4=no" = round(prop.table(table(data_shoppingCovid19$work))*100, 2), 
+"Relationship status, where 1=in a relationship, 2=not" = round(prop.table(table(data_shoppingCovid19$relationship))*100, 2), 
+"Relationship qual, where 1=married, 2=living together, 3=not living together, 4=dont want to tell" =round(prop.table(table(data_shoppingCovid19$relationship_qual))*100, 2),
+"Income before Covid19 (monthly)" = round(prop.table(table(data_shoppingCovid19$income_before))*100, 2), 
+"Income now (past 30 days)" = round(prop.table(table(data_shoppingCovid19$income_now))*100, 2), 
+"SES subjective where 1=richest, 7=poorest" = round(prop.table(table(data_shoppingCovid19$edu_highest))*100, 2)
+)
+
+socio_demographics
+
+## shopping-related factors
+
+shopping_check <- list(
+  "Made offline purchase (1=no, 2=yes)" = table(data_shoppingCovid19$offline_purchase), 
+  "Made online purchase (1=no, 2=yes)" = table(data_shoppingCovid19$online_purchase), 
+  "Credit card overdue (1=no, 2=yes)" = table(data_shoppingCovid19$credit_card), 
+  "Credit card overdue amount (%)" = round(prop.table(table(data_shoppingCovid19$credit_card_amount))*100, 2), 
+  "Owe company (1=no, 2=yes)" = table(data_shoppingCovid19$debt), 
+  "Owe company, amount (%)" = round(prop.table(table(data_shoppingCovid19$debt_amount))*100, 2)
+  )
+shopping_check
+
+```
+
+<br> <br> 
+
+#######################################################
+## compulsive buying + income AND compulsive buying +SES
+#######################################################
+
+```{r plot_income, echo=F, eval=T, warning=F}
+
+# income + offline (Bergen) shopping
+violin_income_bergen <- ggplot(data_shoppingCovid19, aes(x=income_now, y=BERGEN, fill=income_now)) +
+  geom_violin() +
+  labs(title="Offline shopping") +
+  theme_bw()
+
+# SES + offline (Bergen) shopping
+violin_ses_bergen <- ggplot(data_shoppingCovid19, aes(x=SES_subj, y=BERGEN, fill=SES_subj)) +
+  geom_violin() +
+  labs(title="Offline shopping") +
+  theme_bw()
+
+# income + online (COSS) shopping
+violin_income_coss <- ggplot(data_shoppingCovid19, aes(x=income_now, y=COSS, fill=income_now)) +
+  geom_violin() +
+  labs(title="Online shopping") +
+  theme_bw()
+
+# SES + online (COSS) shopping
+violin_ses_coss <- ggplot(data_shoppingCovid19, aes(x=SES_subj, y=COSS, fill=SES_subj)) +
+  geom_violin() +
+  labs(title="Online shopping") +
+  theme_bw()
+
+# combine plot
+violin_CB_incomeSES <- ggarrange(violin_ses_bergen, violin_ses_coss, 
+                                 violin_income_bergen, violin_income_coss, 
+                                 ncol=2, nrow=2)
+violin_CB_incomeSES
+
+# # save plot
+# ggsave(plot=last_plot(), filename="Figures/Explorative/violin_ses_cos.png", 
+#     units="cm", width=30)
+```
+
+<br> <br> 
+
+#######################################################
+## compulsive buying and income+SES
+#######################################################
+
+```{r plot_income2, echo=F, eval=T, message=F}
+
+# for offline shopping (Bergen scale)
+OfflineCB_income_ses <- ggplot(data=data_shoppingCovid19) +
+  geom_point(aes(x=income_now, y=SES_subj, colour = BERGEN), 
+             position= "jitter") +
+  scale_colour_gradient(low= "#88CCEE", high= "#661100") +
+  labs(title="Offline shopping") +
+  theme_bw()
+
+# for online shopping (COSS)
+OnlineCB_income_ses <- ggplot(data=data_shoppingCovid19) +
+  geom_point(aes(x=income_now, y=SES_subj, colour = COSS), 
+             position= "jitter") +
+  scale_colour_gradient(low= "#88CCEE", high= "#661100") +
+  labs(title="Online shopping") +
+  theme_bw()
+
+# combine plots
+CB_incomeSES <- ggarrange(OfflineCB_income_ses, OnlineCB_income_ses, 
+                          ncol=1, nrow=2, widths = 2, heights = 1.3)
+CB_incomeSES
+
+# 
+# # save combined plot
+# ggsave(plot=last_plot(), filename="Figures/Explorative/CB_incomeSES.png", 
+#        units="cm", width=20)
+```
+<br><br>
+
+#######################################################
+## spent category over time
+#######################################################
+
+```{r plot_spent, echo=F, eval=T, message=F}
+
+#set variables
+data_shoppingCovid19$time_batch <- as.factor(data_shoppingCovid19$time_batch)
+data_shoppingCovid19$grocery_value <- as.numeric(data_shoppingCovid19$grocery_value)
+
+#create the mean of spending (value) at each point of assessment (time batch)
+data_spend_category_names <- c("grocery_value", "clothes_value", "shoes_value", "jewellery_value", "electronics_value", 
+                               "books_movies_music_games_value", "health_beauty_value",
+                               "bags_accessories_value", "hobby_value", "gift_value", 
+                               "time_batch")
+data_spend_categories <- aggregate(. ~ time_batch, data_shoppingCovid19[, data_spend_category_names], 
+                                   function(x) mean(x, na.rm=T), na.action=na.pass)
+
+# prep data for ggplot
+data_spend_categories_melt <- melt(data_spend_categories)
+
+# PLOT
+ggplot(data=data_spend_categories_melt, aes(x=time_batch, y=value, color=variable, group=variable)) +
+  geom_line() +
+  labs(title="Spend categories, raw data") +
+    theme_bw()
+  
+ggplot(data=data_spend_categories_melt, aes(x=time_batch, y=value, group=variable)) + 
+    geom_area(position="fill", aes(fill=variable)) +
+  geom_line(position="fill", size=0.5, color="black") +
+  scale_fill_manual(values=c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7",  "#FF9966", "#999999")) +
+  labs(title = "Spend categories, %") +
+  theme_bw()
+
+# # save plot
+# ggsave(plot=last_plot(), filename="Figures/Explorative/spend_categories.png", 
+#        units="cm", width=30)
+```
+
+<br> <br> 
+
+#######################################################
+## CB and stress
+#######################################################
+
+```{r, plot_stress, echo=F, eval=T, message=F, warning=F}
+
+## ONLINE
+stress_onlineCB <- ggplot(data_shoppingCovid19, aes(x=CISS, y=COSS)) +
+  geom_point(aes(group=SES_subj, color=SES_subj), position="jitter") +
+  geom_smooth(stat="smooth") +
+  xlab("Compulsive buying online (COSS)") + ylab("Distress (CISS)") +
+  labs(color="SES subjective") +
+  scale_color_brewer(type="seq", palette="Greens", na.value="grey80") +
+  theme_bw()
+stress_onlineCB
+
+covid19stress_onlineCB <- ggplot(data_shoppingCovid19, 
+                                 aes(x=as.factor(stress_outbreak), y=COSS, color=as.factor(stress_outbreak))) +
+  geom_violin() +
+  scale_color_brewer(type="seq", palette="Greens", na.value="grey80") +
+  facet_wrap(vars(SES_subj), nrow=3, ncol=3) +
+  labs(color="Stress outbreak") +
+  theme_bw()
+covid19stress_onlineCB
+
+## Offline
+
+stress_offlineCB <- ggplot(data_shoppingCovid19, aes(x=CISS, y=BERGEN)) +
+  geom_point(aes(group=SES_subj, color=SES_subj), position="jitter") +
+  geom_smooth(stat="smooth") +
+  xlab("Compulsive buying offline (Bergen)") + ylab("Distress (CISS)") +
+  labs(color="SES subjective") +
+  scale_color_brewer(type="seq", palette="Purples", na.value="grey80") +
+  theme_bw()
+stress_offlineCB
+
+
+covid19stress_offlineCB <- ggplot(data_shoppingCovid19, 
+                                 aes(x=as.factor(stress_outbreak), y=BERGEN, color=as.factor(stress_outbreak))) +
+  geom_violin() +
+  scale_color_brewer(type="seq", palette="Purples", na.value="grey80") +
+  labs(color="Stress outbreak") +
+  facet_wrap(vars(SES_subj), nrow=3, ncol=3) +
+  theme_bw()
+covid19stress_offlineCB
+
+# 
+# # combine plots
+# stress_CB <- ggarrange(stress_onlineCB, stress_offlineCB, 
+#                        covid19stress_onlineCB, covid19stress_offlineCB,
+#                           ncol=2, nrow=2)
+# stress_CB
+
+# # save combined plot
+# ggsave(plot=last_plot(), filename="Figures/Explorative/stress_CB.png", 
+#        units="cm", width=50, height=30) 
+
+```
+
+<br> <br> 
+
+#######################################################
+## behavioral addictions
+#######################################################
+
+```{r, plot_BAs, echo=F, eval=T, message=F}
+
+data_behav_addictions <- data_shoppingCovid19[, c("BAs_shopping", "BAs_alcohol", "BAs_smoking", "BAs_legal_drug", "BAs_illegal_drug", 
+                                                  "BAs_gambling", "BAs_gaming", "BAs_overeating", "BAs_other_freq")]
+data_behav_addictions_gather <- gather(data_behav_addictions, BA)
+data_behav_addictions_gather$BA <- as.factor(data_behav_addictions_gather$BA)
+data_behav_addictions_gather$BA <- factor(data_behav_addictions_gather$BA, levels=c("BAs_other_freq", "BAs_overeating","BAs_gaming","BAs_gambling",
+                                                                                    "BAs_illegal_drug","BAs_legal_drug","BAs_alcohol","BAs_smoking", "BAs_shopping"))
+data_behav_addictions_gather$value <- as.factor(data_behav_addictions_gather$value)
+data_behav_addictions_gather$value <- factor(data_behav_addictions_gather$value, levels=c("not at all", "a little bit","somewhat", "quite a lot", 
+                                                                                    "too much"))
+data_behav_addictions_gather <- data_behav_addictions_gather[!is.na(data_behav_addictions_gather$value), ]
+
+ggplot(data_behav_addictions_gather, aes(x=BA, fill=value)) +
+  geom_bar(stat="count") +
+  scale_fill_brewer(type="seq", palette="Oranges", na.value="grey80") +
+  coord_flip() +
+  labs(title="How often do you engage in the following behaviours?", ylab="Response") +
+  theme_bw()
+
+# # save combined plot
+# ggsave(plot=last_plot(), filename="Figures/Explorative/stress_CB.png", 
+#        units="cm", width=50, height=30) 
+
+```
+
+<br> <br> <br> 
+
+#######################################################
+## gaming for Orsi
+#######################################################
+
+```{r, gaming_Orsi, eval=T, echo=F}
+
+
+ggplot(data_shoppingCovid19, aes(y=age, x=BAs_gaming, color=as.factor(gender))) +
+  geom_point(position="jitter", na.rm=T) +
+  xlab("How often did you engage in the following behaviours **in the past 7 days**") + 
+  ylab("Age") +
+  labs(color="") +
+  scale_color_manual(values=c("red", "blue", "green", "purple")) +
+  theme_bw()
+
+# # save plot
+# ggsave(plot=last_plot(), filename="Figures/Gaming_Orsi/points.png", 
+#        units="cm", width=20) 
+
+
+ggplot(data_shoppingCovid19, aes(y=age, x=BAs_gaming, color=as.factor(gender))) +
+  geom_violin(aes(fill=BAs_gaming)) +
+  xlab("How often did you engage in gaming in the past 7 days?") + 
+  ylab("Age") +
+  labs(color="", fill="") + 
+  theme_bw()
+
+# # save plot
+# ggsave(plot=last_plot(), filename="Figures/Gaming_Orsi/violins.png", 
+#        units="cm", width=20)
+
+```
