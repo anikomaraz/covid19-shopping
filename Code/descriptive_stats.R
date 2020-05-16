@@ -66,6 +66,27 @@ levels(data_shoppingCovid19$study) <- c("1" = "yes, studies", "2" = "no, does no
 data_shoppingCovid19$work <- as.factor(data_shoppingCovid19$work)
 levels(data_shoppingCovid19$work) <- c("1" = "full time", "2" = "part time", "3" = "less than part time", "4" = "no work")
 
+
+# SES
+levels(data_shoppingCovid19$SES_subj) <- c("Poorest", "Poorer", "Poor", "Average", "Rich", "Richer", "Richest")
+
+# income
+initial_levels <- c("15_25k", "25_35k", "35_50k", "50-75k", "75_100k", "above_100k", 
+  "does not want to tell", "under_15k")
+initial_labels <- c("15-25k", "25-35k", "35-50k", "50-75k", "75-100k", "above 100k",
+  "Does not want to tell", "under 15k")
+
+data_shoppingCovid19$income_before <- factor(data_shoppingCovid19$income_before,
+                                             levels=initial_levels,
+                                             labels=initial_labels)
+data_shoppingCovid19$income_before <- fct_relevel(data_shoppingCovid19$income_before, "under 15k", "15-25k", "25-35k", "35-50k", "50-75k", "75-100k", "above 100k", "Does not want to tell")
+
+data_shoppingCovid19$income_now <- factor(data_shoppingCovid19$income_now,
+                                             levels=initial_levels,
+                                             labels=initial_labels)
+data_shoppingCovid19$income_now <- fct_relevel(data_shoppingCovid19$income_now, "under 15k", "15-25k", "25-35k", "35-50k", "50-75k", "75-100k", "above 100k", "Does not want to tell")
+
+
 #######################################################
 ## socio-demographic factors 
 #######################################################

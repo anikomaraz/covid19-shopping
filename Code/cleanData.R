@@ -26,7 +26,7 @@ load_my_packages(packages)
 #######################################################
 
 # read raw data
-raw_shoppingCovid19 <- read.csv2("Data/survey_shopCovid_200508.csv", sep=";")
+raw_shoppingCovid19 <- read.csv2("Data/survey_shopCovid_200514.csv", sep=";")
 
 # basic summary of raw data
 dim(raw_shoppingCovid19) -> data_read_in
@@ -60,8 +60,9 @@ raw_shoppingCovid19 <- mutate(raw_shoppingCovid19,
 
 which(raw_shoppingCovid19$time_fill_out > 100 )
 # plot fill out time
-ggplot(raw_shoppingCovid19, aes(time_fill_out)) +
-  geom_histogram(binwidth = 1) +
+ggplot(subset(raw_shoppingCovid19, time_fill_out < 60), aes(time_fill_out)) +
+  geom_histogram(binwidth = 0.3) +
+  # geom_histogram(binwidth = 0.1) +
   labs(title="Time needed to fill out survey (minutes)") +
   theme_bw()
 
@@ -123,3 +124,8 @@ excluded_data
 
 # save final data
 write_rds(raw_shoppingCovid19, path="Data/raw_shoppingCovid19_clean.rds")
+
+raw_shoppingCovid19[, "feedback"]
+levels(raw_shoppingCovid19[, "BAs_other_text"])
+
+

@@ -31,7 +31,7 @@ data_shoppingCovid19 <- read_rds(path="Data/data_shoppingCovid19_withScales_fact
 dim(data_shoppingCovid19)
 
 #######################################################
-## plotting compulsive buying + income AND compulsive buying +SES
+## compulsive buying + income AND compulsive buying +SES
 #######################################################
 # income + offline (Bergen) shopping
 violin_income_bergen <- ggplot(data_shoppingCovid19, aes(x=income_now, y=BERGEN, fill=income_now)) +
@@ -71,7 +71,7 @@ ggsave(plot=last_plot(), filename="Figures/Explorative/violin_ses_cos.png",
     units="cm", width=30) 
 
 #######################################################
-## plotting compulsive buying and income+SES
+## compulsive buying and income+SES
 #######################################################
 # for offline shopping (Bergen scale)
 OfflineCB_income_ses <- ggplot(data=data_shoppingCovid19) +
