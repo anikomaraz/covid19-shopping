@@ -26,7 +26,7 @@ load_my_packages(packages)
 #######################################################
 
 # read raw data
-raw_shoppingCovid19 <- read.csv2("Data/survey_shopCovid_200514.csv", sep=";")
+raw_shoppingCovid19 <- read.csv2("Data/survey_shopCovid_200628.csv", sep=";")
 
 # basic summary of raw data
 dim(raw_shoppingCovid19) -> data_read_in
@@ -36,9 +36,16 @@ raw_shoppingCovid19 <- mutate(raw_shoppingCovid19,
                               time_batch = round((as.numeric(as.POSIXct(strptime(created, format="%Y-%m-%d")))
                                                   - 1585177200) / (24*60*60) /3) +1)
 raw_shoppingCovid19$time_batch <- as.factor(raw_shoppingCovid19$time_batch)
+# data_shoppingCovid19_online$time_batch <- as.factor(data_shoppingCovid19_online$time_batch)
 table(raw_shoppingCovid19$time_batch)
 
+# calculate days since the Trump administration declared a national emergency on March 13
+# the first data was collected on March 26
 
+raw_shoppingCovid19$time_batch <- as.integer(raw_shoppingCovid19$time_batch)
+raw_shoppingCovid19$time_days <- raw_shoppingCovid19$time_batch * 3 + 11
+table(raw_shoppingCovid19$time_days)                                                                                   
+                                                                                   
 # delete test cases
 test_cases <- "cleanSunBearXXX8rLbOARl9iNgo9YOvPZK4xptF8rbCyRCTGZeHL8-MXLiyIMEF"
 raw_shoppingCovid19 <- raw_shoppingCovid19[raw_shoppingCovid19$session != test_cases, ]
@@ -110,6 +117,7 @@ raw_shoppingCovid19$SDS_honesty <- rowSums(raw_shoppingCovid19[, grep("sds_\\d+$
 raw_shoppingCovid19 <- raw_shoppingCovid19[raw_shoppingCovid19$SDS_honesty > 10, ]
 dim(raw_shoppingCovid19) -> no_liers
 
+
 #######################################################
 ## summary of cleaning and final data
 #######################################################
@@ -120,12 +128,12 @@ excluded_data <- list(
   "data without incomplete cases (on age2)" = data_no_incomplete, 
   "data without participants making too many errors (>1)" = data_no_excess_errors, 
   "data without liers" = no_liers)
-excluded_data
 
 # save final data
 write_rds(raw_shoppingCovid19, path="Data/raw_shoppingCovid19_clean.rds")
 
-raw_shoppingCovid19[, "feedback"]
+# checking data on the go
 levels(raw_shoppingCovid19[, "BAs_other_text"])
-
-
+raw_shoppingCovid19[500:600, "feedback"]
+excluded_data
+table(raw_shoppingCovid19$time_days)

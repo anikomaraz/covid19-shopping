@@ -27,7 +27,7 @@ load_my_packages(packages)
 #######################################################
 ## read data 
 #######################################################
-data_shoppingCovid19 <- read_rds(path="Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
+data_shoppingCovid19 <- read_rds(path="../../Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
 dim(data_shoppingCovid19)
 
 
@@ -61,7 +61,7 @@ students_income <- annotate_figure(students_income, fig.lab = "Student status",
 students_income
 
 # save combined plot
-ggsave(plot=last_plot(), filename="Figures/Students/students_income.png")
+ggsave(plot=last_plot(), filename="../../Figures/Students/students_income.png")
 
 
 
@@ -94,6 +94,6 @@ age_compulsive_buying <- ggarrange(age_online, age_offline,
 age_compulsive_buying
 
 # save combined plot
-ggsave(plot=last_plot(), filename="Figures/Explorative/age_compulsive_buying.png")
+ggsave(plot=last_plot(), filename="../../Figures/Explorative/age_compulsive_buying.png")
 
 
