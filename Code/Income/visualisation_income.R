@@ -60,7 +60,6 @@ goods_colors <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B
 spent_categories <- c("less than 50", "50-100", "100-250", "250-500", "500-1000", "over 1000", "")
 
 
-
 #######################################################
 ## debts 
 #######################################################
@@ -322,10 +321,13 @@ ggsave(plot=last_plot(), filename="Figures/Income/incomeSES_shop.png",
 #######################################################
 ## CB, stress and facet by SES  ON THE SAME PLOT
 #######################################################
+span = 0.4
+
 stress_cb_facetSES_smooth_online <- ggplot(subset(data_shoppingCovid19, !is.na(SES_subj)), aes(x=CISS, y=COSS)) +
   # geom_point(aes(color=SES_subj), position = position_jitterdodge()) +
   geom_smooth(stat="smooth", color="black", 
-              aes(fill="Total"))+
+              aes(fill="Total"), 
+              span = span)+
   geom_smooth(aes(group=SES_subj, color=SES_subj), 
               stat="smooth", se=F) +
   scale_color_manual(values=SES_colors)+
@@ -341,7 +343,8 @@ stress_cb_facetSES_smooth_online
 stress_cb_facetSES_smooth_offline <- ggplot(subset(data_shoppingCovid19, !is.na(SES_subj)), aes(x=CISS, y=BERGEN)) +
   # geom_point(aes(color=SES_subj), position = position_jitterdodge()) +
   geom_smooth(stat="smooth", color="black", 
-              aes(fill="Total")) +
+              aes(fill="Total"), 
+              span = span) +
   geom_smooth(aes(group=SES_subj, color=SES_subj), stat="smooth", se=F) +
   # display.brewer.all(colorblindFriendly=T)
   scale_color_manual(values=SES_colors)+
@@ -383,10 +386,13 @@ levels(data_spend_categories_melt$spend_category) <- c("Grocery", "Clothes", "Sh
                                                        "Health and Beauty", "Bags and Accessories", "Hobby", "Gift")
 
 # PLOT
+span = 0.5
+
 spend_raw <- ggplot(data=data_spend_categories_melt, 
                     aes(x=time_days, y=value, color=spend_category, group=spend_category)) +
   # geom_line(size=1.2) +
-  geom_smooth(se=F, size=1.3) +
+  geom_smooth(se=F, size=1.3, 
+              span = span) +
   scale_color_manual(values=goods_colors) +
   # display.brewer.all(colorblindFriendly=T)
   labs(color="", x="Time (Days since the outbreak)", y="Spent Category ($)") +
@@ -457,7 +463,8 @@ spend_over_time_spend <-
   ggplot(data=data_spend_category_time_ses_melt,
                               aes(x=time_days, y=value, group=SES_subj_3cat, color=SES_subj_3cat)) +
   # geom_line() +
-  geom_smooth(se=T, aes(fill=SES_subj_3cat)) +
+  geom_smooth(se=T, aes(fill=SES_subj_3cat), 
+              span = 0.5) +
   # scale_color_manual(values=c("#0072B2", "#009E73", "#D55E00")) +
   scale_color_manual(values=SES_colors_3cat) +
   scale_fill_manual(values=SES_colors_3cat) +
@@ -481,7 +488,7 @@ spend_over_time_ses_catMerged <-
   ggplot(data=data_spend_category_time_ses_melt, 
          aes(x=time_days, y=value, group=variable, color=variable)) +
   # geom_line(stat="identity") +
-  geom_smooth() +
+  geom_smooth(span = 0.4, se=F) +
   scale_color_manual(values=goods_colors) +
   facet_wrap(~SES_subj_3cat, ncol=1) +
   labs(x="Time (Days since the outbreak)", y="Spending category ($)", color="") +
@@ -510,14 +517,19 @@ data_cb_over_time$SES_subj <- dplyr::recode(data_cb_over_time$SES_subj,
                                                                  "Rich" ="Richest, Richer or Rich")
 data_cb_over_time_melt <- melt(data_cb_over_time, id=c("SES_subj", "time_days"), variable="shop_type")
 
+# set span for plotting
+span = 0.4
+
 # plot online shopping
 cb_over_time_online <- 
 ggplot(subset(data_cb_over_time_melt, shop_type == "COSS"), aes(x=time_days, y=value)) + 
   geom_smooth(se=T, aes(fill="Total"), 
               linetype="dashed", 
-              color="black") + 
+              color="black", 
+              span = span) + 
   geom_smooth(se=T, aes(color=SES_subj), 
-              size=1.5, alpha=0.2) +
+              size=1.5, alpha=0.2, 
+              span = span) +
   scale_x_continuous(breaks = seq(0, max(data_spend_category_time_ses_melt$time_days), by=5)) +
   labs(x="Time (Days since the outbreak)", y="Online shopping", 
        color="", group="", fill="") +
@@ -537,9 +549,11 @@ ggplot(subset(data_cb_over_time_melt, shop_type == "BERGEN"),
        aes(x=time_days, y=value)) + 
   geom_smooth(se=T, aes(fill="Total"), 
               linetype="dashed", 
-              color="black") + 
+              color="black", 
+              span = span) + 
   geom_smooth(se=T, aes(color=SES_subj), 
-              size=1.5, alpha=0.2) +
+              size=1.5, alpha=0.2, 
+              span= span) +
   scale_x_continuous(breaks = seq(0, max(data_spend_category_time_ses_melt$time_days), by=5)) +
   scale_fill_manual(name = "", values = c(SES_colors_3cat, "Total" = "black")) +
   labs(x="Time (Days since the outbreak)", y="Offline shopping", 
@@ -548,8 +562,10 @@ ggplot(subset(data_cb_over_time_melt, shop_type == "BERGEN"),
   scale_y_continuous(breaks = seq(20, 120, by=10)) +
   theme_pubr()
 
-# save plot
+# compbine plot
 ggarrange(cb_over_time_online, cb_over_time_offline, 
           nrow = 2, common.legend = T)
+
+# save plot
 ggsave(plot=last_plot(), filename="Figures/Income/cb_over_time.png", 
        width=12, height=12, units = "cm")
