@@ -27,7 +27,7 @@ load_my_packages(packages)
 #######################################################
 ## read data 
 #######################################################
-data_shoppingCovid19 <- read_rds(path="Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
+data_shoppingCovid19 <- read_rds("Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
 dim(data_shoppingCovid19)
 
 # subset for online shopping only
@@ -205,7 +205,8 @@ plot_ses_offline <- ggplot(subset(data_shoppingCovid19_ses, !is.na(SES_subj)),
        y="Offline shopping") +
   # display.brewer.all(colorblindFriendly=T)
   scale_fill_brewer(type="seq", palette="BuPu", na.value="grey80") +
-  theme_pubr(legend="none")
+  theme_pubr(legend="none") +
+  labs_pubr(base_size=12)
 plot_ses_offline
 
 
@@ -271,7 +272,8 @@ plot_income_offline <- ggplot(data_income_melt, aes(x=value, y=BERGEN, fill=inco
   labs(fill="", x="", y="Offline shopping", 
        title = "") +
   scale_fill_brewer(type="seq", palette="Purples") +
-  theme_pubr(legend="none") 
+  theme_pubr(legend="none") +
+  labs_pubr(base_size=10)
 plot_income_offline
 
 # plot online
@@ -299,7 +301,7 @@ incomeSES_shop
 
 # save plot
 ggsave(plot=last_plot(), filename="Figures/Income/incomeSES_shop.png", 
-       height = 12, width= 25, units="cm")
+       height = 12, width= 28, units="cm")
 
 
 # #######################################################
@@ -364,7 +366,7 @@ ggarrange(stress_cb_facetSES_smooth_online, stress_cb_facetSES_smooth_offline,
 
 
 ggsave(plot=last_plot(), filename="Figures/Income/stress_cb_facetSES_smooth.png", 
-       width=20, height=15, units="cm")
+       width=25, height=15, units="cm")
 
 
 
@@ -397,12 +399,12 @@ spend_raw <- ggplot(data=data_spend_categories_melt,
   # display.brewer.all(colorblindFriendly=T)
   labs(color="", x="Time (Days since the outbreak)", y="Spent Category ($)") +
   scale_y_continuous(breaks = 1:7, labels = spent_categories) +
-  scale_x_continuous(breaks = seq(0, max(data_spend_category_time_ses_melt$time_days), by=5)) +
+  scale_x_continuous(breaks = seq(0, max(data_spend_category_time_ses_melt$time_days), by=10)) +
   theme_pubr(legend = "right")
 spend_raw
 
 # save plot
-ggsave(plot=last_plot(), filename="Figures/Income/spend_raw.png", 
+ggsave(plot=spend_raw, filename="Figures/Income/spend_raw.png", 
        width=20, height=12, units="cm")
 
 
@@ -535,7 +537,7 @@ ggplot(subset(data_cb_over_time_melt, shop_type == "COSS"), aes(x=time_days, y=v
        color="", group="", fill="") +
   scale_fill_manual(name = "", values = c(SES_colors_3cat, "Total" = "black")) +
   scale_color_manual(values=SES_colors_3cat) +
-  scale_y_continuous(breaks = seq(20, 120, by=10)) +
+  scale_y_continuous(breaks = seq(20, 120, by=20)) +
   theme_pubr() +
   theme(
     axis.title.x = element_blank(),
@@ -559,7 +561,8 @@ ggplot(subset(data_cb_over_time_melt, shop_type == "BERGEN"),
   labs(x="Time (Days since the outbreak)", y="Offline shopping", 
        color="", fill="") +
   scale_color_manual(values=SES_colors_3cat) +
-  scale_y_continuous(breaks = seq(20, 120, by=10)) +
+  scale_y_continuous(breaks = seq(20, 120, by=20)) +
+  scale_x_continuous(breaks = seq(0, max(data_spend_category_time_ses_melt$time_days), by=10)) +
   theme_pubr()
 
 # compbine plot
@@ -568,4 +571,4 @@ ggarrange(cb_over_time_online, cb_over_time_offline,
 
 # save plot
 ggsave(plot=last_plot(), filename="Figures/Income/cb_over_time.png", 
-       width=12, height=12, units = "cm")
+       width=16, height=12, units = "cm")

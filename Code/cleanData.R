@@ -26,7 +26,7 @@ load_my_packages(packages)
 #######################################################
 
 # read raw data
-raw_shoppingCovid19 <- read.csv2("Data/survey_shopCovid_200628.csv", sep=";")
+raw_shoppingCovid19 <- read.csv2("Data/survey_shopCovid_201002_final.csv", sep=";")
 
 # basic summary of raw data
 dim(raw_shoppingCovid19) -> data_read_in
@@ -134,6 +134,7 @@ write_rds(raw_shoppingCovid19, path="Data/raw_shoppingCovid19_clean.rds")
 
 # checking data on the go
 levels(raw_shoppingCovid19[, "BAs_other_text"])
-raw_shoppingCovid19[500:600, "feedback"]
+last(raw_shoppingCovid19["feedback"], 50)
 excluded_data
 table(raw_shoppingCovid19$time_days)
+

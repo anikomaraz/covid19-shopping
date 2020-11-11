@@ -25,7 +25,7 @@ load_my_packages(packages)
 #######################################################
 ## read data 
 #######################################################
-data_shoppingCovid19 <- read_rds(path="Data/data_shoppingCovid19_withScales.rds")
+data_shoppingCovid19 <- read_rds("Data/data_shoppingCovid19_withScales.rds")
 dim(data_shoppingCovid19)
 
 #######################################################
@@ -35,8 +35,9 @@ data_shoppingCovid19$gender <- as.factor(data_shoppingCovid19$gender)
 levels(data_shoppingCovid19$gender) <- c("1" = "female", "2" = "male", "3" = "other", "4" = "does not want to tell")
 
 # SES
-levels(data_shoppingCovid19$SES_subj) <- c("Poorest", "Poorer", "Poor", "Average", "Rich", "Richer", "Richest")
-
+as.factor(data_shoppingCovid19$SES_subj)
+levels(data_shoppingCovid19$SES_subj) <- c("NA", levels(data_shoppingCovid19$SES_subj))
+                                           
 # income
 # income <- c("income_before", "income_now")
 # for (i in income) {

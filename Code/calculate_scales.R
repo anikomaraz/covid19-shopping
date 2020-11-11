@@ -25,7 +25,7 @@ load_my_packages(packages)
 #######################################################
 ## read data 
 #######################################################
-data_shoppingCovid19 <- read_rds(path="Data/raw_shoppingCovid19_clean.rds")
+data_shoppingCovid19 <- read_rds("Data/raw_shoppingCovid19_clean.rds")
 dim(data_shoppingCovid19)
 
 

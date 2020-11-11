@@ -31,6 +31,10 @@ data_shoppingCovid19 <- read_rds(path="Data/data_shoppingCovid19_withScales_fact
 dim(data_shoppingCovid19)
 table(data_shoppingCovid19$time_batch)
 
+# read Covid-19 cases data
+## downloaded from https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
+
+
 #######################################################
 ## settings for plots 
 #######################################################
@@ -132,15 +136,18 @@ data_distress$stress_outbreak_01 <- (data_distress$stress_outbreak - min(data_di
 span <- 0.4
 
 BAs_tooMuch_perTime <- ggplot() +
-  geom_smooth(data=data_distress, 
+  geom_smooth(method = "loess", 
+              data=data_distress, 
               aes(y=CISS_01, x=time_days, fill="DISTRESS"), 
               linetype = "dashed", color="darkblue", 
               span = span) +
-  geom_smooth(data=data_distress, 
+  geom_smooth(method = "loess", 
+              data=data_distress, 
               aes(y=stress_outbreak_01, x=time_days, fill="COVID19 STRESS"), 
               linetype="dashed", color="darkblue", 
               span = span) +
-  geom_smooth(data=data_behav_addictions_time_melt, 
+  geom_smooth(method = "loess", 
+              data=data_behav_addictions_time_melt, 
               aes(x=time_days, y=too_much_01, color=BA),
               se=F, 
               span = span) +
@@ -158,5 +165,63 @@ BAs_tooMuch_perTime
 # save
 ggsave(plot=last_plot(), filename="Figures/BAs/BAs_tooMuch_perTime.png", 
        width=20, height=12, units="cm") 
+
+
+#######################################################
+## BA = mean over time
+#######################################################
+# prep data
+BAs <- c("BAs_shopping", "BAs_alcohol", "BAs_smoking", "BAs_legal_drug", "BAs_illegal_drug", 
+"BAs_gambling", "BAs_gaming", "BAs_overeating")
+data_behav_addictions_mean_time <- data_shoppingCovid19[, c(BAs, "time_days")]
+
+# transform BA variables to numeric
+data_behav_addictions_mean_time[BAs] <- sapply(data_behav_addictions_mean_time[BAs],
+                                               as.numeric)
+
+# melt data
+data_behav_addictions_mean_time_melt <- reshape2::melt(data_behav_addictions_mean_time, id.vars="time_days")
+
+# recode BA categories
+levels(data_behav_addictions_mean_time_melt$variable) <- c("BAs_shopping" = "Shopping", "BAs_alcohol" = "Alcohol", "BAs_smoking" = "Smoking",
+                                                "BAs_legal_drug" = "Legal Substance(s)", "BAs_illegal_drug" = "Illegal Substance(s)", "BAs_gambling" = "Gambling", 
+                                                "BAs_gaming" = "Gaming", "BAs_overeating" = "Overeating")
+# prep distress/CovidStress data
+data_distress15 <- data_shoppingCovid19[, c("CISS", "stress_outbreak", "time_days")]
+data_distress15$CISS_15 <- (data_distress15$CISS - min(data_distress15$CISS)) / max(data_distress15$CISS) * 5 +2
+data_distress15$stress_outbreak_15 <- (data_distress15$stress_outbreak - min(data_distress15$stress_outbreak)) / max(data_distress15$stress_outbreak) * 5 +2
+
+
+# plot
+span = 0.5
+
+ggplot() +
+  geom_smooth(method = "loess", data=data_behav_addictions_mean_time_melt,
+              aes(x=time_days, y=value,
+                  group = variable, color = variable),
+              span=span, se=F)+
+  geom_smooth(method= "loess", data=data_distress15, 
+              aes(y=CISS_15, x=time_days, fill="DISTRESS"), 
+              linetype = "dashed", color="darkblue", 
+              span = span) +
+  geom_smooth(method = "loess", data=data_distress15, 
+              aes(y=stress_outbreak_15, x=time_days, fill="COVID19 STRESS"), 
+              linetype="dashed", color="darkblue", 
+              span = span) +
+  # scale_fill_manual(values=BA_colors8) +
+  scale_color_manual(values=BA_colors8) +
+  labs(x="Time (Days since the outbreak)",
+       y=expression(paste("1 = Not at all", "        ", "5 = Too much")),
+       color="", group = "",
+       title="How often did you engage in [name of the activity] in the past 7 days?") +
+  scale_fill_manual(name = "", values = c(BA_colors8, "DISTRESS" = "grey30", "COVID19 STRESS" = "purple")) +
+  scale_x_continuous(breaks = seq(0, 200, by = 10)) +
+  scale_y_continuous(breaks = seq(0, 3.5, by = 0.5)) +
+    theme_pubr(legend="right")
+
+# save plot
+ggsave(plot=last_plot(), filename="Figures/BAs/BAs_all_perTime.png", 
+       width=20, height=12, units="cm") 
+
 
 
