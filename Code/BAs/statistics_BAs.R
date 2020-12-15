@@ -24,41 +24,37 @@ load_my_packages(packages)
 #######################################################
 ## read data 
 #######################################################
-data_shoppingCovid19 <- read_rds(path="../../Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
+data_shoppingCovid19 <- read_rds("Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
 dim(data_shoppingCovid19)
 
 #######################################################
-## H1 
+## H1: The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
 #######################################################
 BAs <- c("BAs_shopping", "BAs_alcohol", "BAs_smoking",
          "BAs_legal_drug", "BAs_illegal_drug", "BAs_gambling", 
          "BAs_gaming", "BAs_overeating")
 
-library(nlme)
-for (i in BAs) {
-  # turn scales into numeric
-  
-  # get rid of missing data
-  data <- subset(data_shoppingCovid19, !is.na(data_shoppingCovid19$BAs_shopping_num))
-  
-  # calculate fit
-  lmeFit <- lme(BAs_shopping_num ~ time_batch, random=~1 | session,
-              method="ML", 
-              data=data_shoppingCovid19)
-  anova(lmeFit)
-  summary(lmeFit)
-  
-}
+# test the linearity among correlation coefficients calculated at each point of time
+# (Aniko)
 
-library(sjstats)
-data_shoppingCovid19$id <- as.(1:length(data_shoppingCovid19$session))
-data_shoppingCovid19$time_batch_xx <- as.numeric(data_shoppingCovid19$time_batch)
+#######################################################
+## H2: Self-reported addiction-related behavioral problems are related to general distress
+#######################################################
+# list each addiction-related behavioural problems
+BAs <- c("BAs_shopping", "BAs_alcohol", "BAs_smoking",
+         "BAs_legal_drug", "BAs_illegal_drug", "BAs_gambling", 
+         "BAs_gaming", "BAs_overeating")
 
-fit <- lme4::lmer(BAs_shopping_num ~ time_batch + (1 | time_batch), 
-            data = data_shoppingCovid19)
-summary(fit)
+# calculate a correlation coefficient (Spearman) between each behavioural problem and PSS, the total score of the past-7-day distress scale
+# see this guide for choosing a corr.coeff.: https://journals.sagepub.com/doi/pdf/10.1177/8756479308317006
+#(Eva)
 
-data_shoppingCovid19$time_batch_num <- as.numeric(data_shoppingCovid19$time_batch)
-cor.test(data_shoppingCovid19$BAs_shopping_num, data_shoppingCovid19$time_batch_num, 
-    method = "spearman")
+
+#######################################################
+## H3: Self-reported addiction-related behavioral problems are related to Covid19-related distress
+#######################################################
+# calculate a correlation coefficient (Kendall's rank correlation, but please calculate Spearman too for cross-checking) between each behavioural problem and the variable "stress_outbreak" - a one-item indicator
+# (Eva)
+
+
 

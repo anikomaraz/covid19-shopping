@@ -27,12 +27,20 @@ load_my_packages(packages)
 #######################################################
 ## read data 
 #######################################################
-data_shoppingCovid19 <- read_rds(path="Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
+data_shoppingCovid19 <- read_rds("Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
 dim(data_shoppingCovid19)
 table(data_shoppingCovid19$time_batch)
 
-# read Covid-19 cases data
+## read Covid-19 cases data
 ## downloaded from https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
+# create a new dataset (called data_covidCases) restricted to the time period of 26.03.2020 to 02.10.2020 only where countryterritoryCode == "USA", with the variables of "cases", "deaths", "popData2019" and "Cumulative_number_for..."
+# create a new time variable (called "date" where day, month and year are merged and labelled as a date variable (use lubridate package), for example as 26.03.2020)
+# create a new variable (based on date, call it "days_passed") which indicates how many days have passed since the start of the outbreak, which is officially the 13.03.2020
+# save the downloaded and the extracted dataset to the "Data" folder
+## (Eva)
+
+
+
 
 
 #######################################################
