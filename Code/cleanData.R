@@ -26,7 +26,7 @@ load_my_packages(packages)
 #######################################################
 
 # read raw data
-raw_shoppingCovid19 <- read.csv2("Data/survey_shopCovid_201002_final.csv", sep=";")
+raw_shoppingCovid19 <- read.csv2("Data/survey_shopCovid_201002_final.csv", sep=",")
 
 # basic summary of raw data
 dim(raw_shoppingCovid19) -> data_read_in
@@ -72,6 +72,10 @@ ggplot(subset(raw_shoppingCovid19, time_fill_out < 60), aes(time_fill_out)) +
   # geom_histogram(binwidth = 0.1) +
   labs(title="Time needed to fill out survey (minutes)") +
   theme_bw()
+
+median(raw_shoppingCovid19$time_fill_out, na.rm=T)
+mean(raw_shoppingCovid19$time_fill_out, na.rm=T)
+sd(raw_shoppingCovid19$time_fill_out, na.rm=T)
 
 
 #######################################################
@@ -128,6 +132,7 @@ excluded_data <- list(
   "data without incomplete cases (on age2)" = data_no_incomplete, 
   "data without participants making too many errors (>1)" = data_no_excess_errors, 
   "data without liers" = no_liers)
+excluded_data
 
 # save final data
 write_rds(raw_shoppingCovid19, path="Data/raw_shoppingCovid19_clean.rds")
@@ -138,3 +143,9 @@ last(raw_shoppingCovid19["feedback"], 50)
 excluded_data
 table(raw_shoppingCovid19$time_days)
 
+# descriptions
+table(raw_shoppingCovid19$gender)
+mean(raw_shoppingCovid19$age)
+sd(raw_shoppingCovid19$age)
+table(raw_shoppingCovid19$edu_highest)
+levels(raw_shoppingCovid19$BAs_other_text)
