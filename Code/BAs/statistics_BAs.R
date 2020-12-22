@@ -100,7 +100,8 @@ cor.test(dataframeH2$BAs_legal_drug, dataframeH2$PSS, method=c("spearman"), na.r
 cor.test(dataframeH2$BAs_illegal_drug, dataframeH2$PSS, method=c("spearman"), na.rm = T)
 cor.test(dataframeH2$BAs_gambling, dataframeH2$PSS, method=c("spearman"), na.rm = T)
 cor.test(dataframeH2$BAs_gaming, dataframeH2$PSS, method=c("spearman"), na.rm = T)
-cor.test(dataframeH2$BAs_overeating, dataframeH2$PSS, method=c("spearman"), na.rm = T)
+cor.test(dataframeH2$BAs_overeating, dataframeH2$PSS, method=c("spearman"), na.rm = T) 
+
 
 
 #######################################################
