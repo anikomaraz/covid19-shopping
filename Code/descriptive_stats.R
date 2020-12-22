@@ -153,4 +153,4 @@ print(round(descriptive_scales, 3))
 #######################################################
 ## save final data with scales and factor levels adjusted
 #######################################################
-write_rds(data_shoppingCovid19, path="Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
+write_rds(data_shoppingCovid19, "Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
