@@ -42,11 +42,12 @@ table(data_shoppingCovid19$time_batch)
 #creat dataset data_covidCases
 library(readxl)
 library(dplyr)
-Covid19geograpicdistirbutionww <- read_xlsx("COVID-19-geographic-disbtribution-worldwide-2020-12-14.xlsx")
+getwd()
+Covid19geograpicdistirbutionww <- read_xlsx("Data/COVID-19-geographic-disbtribution-worldwide-2020-12-14.xlsx")
 data_covidCases <- Covid19geograpicdistirbutionww %>% 
   filter(countryterritoryCode == "USA") %>% 
   filter(dateRep > "2020-03-26") %>%
-  filter(dateRep < "2020-10-02") 
+  filter(dateRep < "2020-10-03") 
 
 min(data_covidCases$dateRep)
 max(data_covidCases$dateRep)
@@ -76,7 +77,11 @@ data_covidCases <- data_covidCases %>%
 data_covidCases <- data.frame(data_covidCases, days_passed)
 
 #save data_covidCases
-write.csv(data_covidCases, file ="data_covidCases.csv")
+write.csv(data_covidCases, file ="Data/data_covidCases.csv")
+
+# check dataframe
+ggplot(data_covidCases, aes(y=cases, x=days_passed)) + geom_line()
+
 
 #######################################################
 ## settings for plots 
