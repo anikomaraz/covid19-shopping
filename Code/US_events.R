@@ -11,6 +11,8 @@ April 6, - Deaths from COVID-19 become the leading cause of death in the United 
 April 16, - light of restoration # the administration unveiled new federal guidelines for a three-phased approach to restoring normal commerce and services, but only for places with strong testing and seeing a decrease in COVID-19 cases.
 early May - stay-at-home orders lifted # between 26 April and 13 May
 
+July 14 - The House Appropriations Committee approved a measure requiring masks on public transportation.[514]
+
 https://www.justsecurity.org/69650/timeline-of-the-coronavirus-pandemic-and-u-s-response/
   
   
