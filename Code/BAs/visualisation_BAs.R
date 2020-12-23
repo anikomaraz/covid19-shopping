@@ -76,12 +76,11 @@ data_covidCases <- data_covidCases %>%
 
 data_covidCases <- data.frame(data_covidCases, days_passed)
 
-#save data_covidCases
-write.csv(data_covidCases, file ="Data/data_covidCases.csv")
-
 # check dataframe
 ggplot(data_covidCases, aes(y=cases, x=days_passed)) + geom_line()
 
+#save data_covidCases
+write.csv(data_covidCases, file ="Data/data_covidCases.csv")
 
 #######################################################
 ## settings for plots 
@@ -89,6 +88,8 @@ ggplot(data_covidCases, aes(y=cases, x=days_passed)) + geom_line()
 BA_colors8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 # ,  "#FF9966"
 # , "#999999"
+
+span = 0.2
 
 #######################################################
 ## BAs
@@ -114,7 +115,7 @@ data_behav_addictions_gather$value <- factor(data_behav_addictions_gather$value,
 data_behav_addictions_gather <- data_behav_addictions_gather[!is.na(data_behav_addictions_gather$value), ]
 
 
-
+# plot
 ggplot(data_behav_addictions_gather, aes(x=BA, fill=value)) +
   geom_bar(stat="count", position = "fill") +
   scale_fill_brewer(type="seq", palette="Oranges", na.value="grey80") +
@@ -154,29 +155,51 @@ data_distress15$CISS_15 <- (data_distress15$CISS - min(data_distress15$CISS)) / 
 data_distress15$stress_outbreak_15 <- (data_distress15$stress_outbreak - min(data_distress15$stress_outbreak)) / max(data_distress15$stress_outbreak) * 5 +2
 
 ## Covid19 events in US economy
+# start: 13.03.2020   President Trump issues the Proclamation on Declaring a National Emergency Concerning the Novel Coronavirus Disease (COVID-19) Outbreak, declaring a national state of emergency.[
 # 27/03 Trump’s stimulus package # President Trump signs a $2 trillion stimulus package into law 
 # The bill provides a one time payment of  a $1,200 check for individuals making up to $75,000 per year or $2,400 for couples earning less than $150,000. It also includes loans to businesses, funds unemployment insurance, bails out airlines and cargo carriers, authorizes aid to states and defers taxes, among other things
-event_stimulus_package_day <- 29 # 09.04.2020
+event_stimulus_package_day <- 27 # 09.04.2020
 event_stimulus_package_name <- "Stimulus Package of $1,200"
 
 # stay-at-home orders lifted # between 26 April and 13 May
-event_lockdown_lifted_day <- 46 # 26.04.2020
-event_lockdown_lifted_name <- "Lockdown lifting"
+event_lockdown_lifted_day <- 44 # 26.04.2020
+event_lockdown_lifted_name <- "Lockdown lifting begins"
+
+# The George Floyd protests begin in Minneapolis
+event_GeorgeFloyd_day <-  74 # 26.05.2020
+event_GeorgeFloyd_name <- "George Floyd protests begin"
 
 # The House Appropriations Committee approved a measure requiring masks on public transportation
-event_mask_day <- 125 # 14.07.2020
+event_mask_day <- 123 # 14.07.2020
 event_mask_name <- "Masks on public transport"
 
+# July 28: The CDC calls for reopening American schools
+event_schools_day <-  137 # 28.07.2020
+event_schools_name <- "CDS calls for reopening\n  schools"
 
 
-# plot
-span = 0.2
 
+# plot excessive behaviours
+plot_BAs <- 
 ggplot() +
   geom_smooth(method = "loess", data=data_behav_addictions_mean_time_melt,
               aes(x=time_days, y=value,
                   group = variable, color = variable),
+              size = 0.7, 
               span=span, se=F)+
+  scale_color_manual(values=BA_colors8) +
+  labs(x="Time (days since the outbreak)\n between 26/03/2020 and 02/10/2020",
+       y="Frequency",
+       color="", group = "",
+       title="How often did you engage in [name of the activity] in the past \n7 days?") +
+  scale_fill_manual(name = "", values = c(BA_colors8, "DISTRESS" = "grey30", "COVID19 STRESS" = "purple")) +
+  scale_x_continuous(breaks = seq(0, 200, by = 20)) +
+  scale_y_continuous(breaks = seq(0, 3.5, by = 0.5)) +
+  theme_pubr(legend="top") 
+
+# plot distress
+plot_distress <- 
+ggplot() +
   geom_smooth(method= "loess", data=data_distress15, 
               aes(y=CISS_15, x=time_days, fill="DISTRESS"), 
               linetype = "dashed", color="darkblue", 
@@ -185,37 +208,63 @@ ggplot() +
               aes(y=stress_outbreak_15, x=time_days, fill="COVID19 STRESS"), 
               linetype="dashed", color="darkblue", 
               span = span) +
+  
   # scale_fill_manual(values=BA_colors8) +
   scale_color_manual(values=BA_colors8) +
-  labs(x="Time (days since the outbreak)\n between 26/03/2020 and 02/10/2020",
-       y=expression(paste("Frequency,", "   ", "where 1 = Not at all", "  ", "5 = Too much")),
+  labs(x="",
+       y="",
        color="", group = "",
-       title="How often did you engage in [name of the activity] in the past 7 days?") +
+       title="Distress during the outbreak") +
   scale_fill_manual(name = "", values = c(BA_colors8, "DISTRESS" = "grey30", "COVID19 STRESS" = "purple")) +
   scale_x_continuous(breaks = seq(0, 200, by = 20)) +
-  scale_y_continuous(breaks = seq(0, 3.5, by = 0.5)) +
+  theme_pubr(legend="top")
+
+# plot Covid19 cases
+plot_cases <- 
+  ggplot() +
+    # add Covid cases
+  geom_smooth(data = data_covidCases, aes(y = cases, x = days_passed), 
+              color = "black", method = "loess", se=F) +
+  labs(title="New Covid-19 cases") +
+  scale_x_continuous(breaks = seq(0, 200, by = 20)) +
+  scale_y_continuous(n.breaks = 8) +
   # add Covid19 events
-  annotate(geom="text", x=event_stimulus_package_day + 20, y=7, label=event_stimulus_package_name,
+  annotate(geom="text", x=event_stimulus_package_day + 20, y=50000, label=event_stimulus_package_name,
            color="red") +
-  annotate(geom="text", x=event_lockdown_lifted_day + 15, y=6, label=event_lockdown_lifted_name,
+  annotate(geom="text", x=event_lockdown_lifted_day + 21, y=40000, label=event_lockdown_lifted_name,
            color="red") +
-  annotate(geom="text", x=event_mask_day + 15, y=6.4, label=event_mask_name,
+  annotate(geom="text", x=event_mask_day + 15, y=73000, label=event_mask_name,
            color="red") +
+  annotate(geom="text", x=event_GeorgeFloyd_day + 15, y=30000, label=event_GeorgeFloyd_name,
+           color="red") +
+  annotate(geom="text", x=event_schools_day + 32, y=63000, label=event_schools_name,
+           color="red") +
+  
   # add arrows
-  geom_segment(aes(x = event_stimulus_package_day, y = 6.8, 
-                   xend = event_stimulus_package_day + 0.5, yend = 6),
-                   arrow = arrow(length = unit(0.3, "cm")), color="red") + 
-  geom_segment(aes(x = event_lockdown_lifted_day, y = 5.8, 
-                   xend = event_lockdown_lifted_day + 0.5, yend = 5),
+  geom_segment(aes(x = event_stimulus_package_day, y = 48000, 
+                   xend = event_stimulus_package_day + 0.5, yend = 43000),
                arrow = arrow(length = unit(0.3, "cm")), color="red") + 
-  geom_segment(aes(x = event_mask_day, y = 6.2, 
-                   xend = event_mask_day + 0.5, yend = 5.4),
+  geom_segment(aes(x = event_lockdown_lifted_day, y = 38000, 
+                   xend = event_lockdown_lifted_day + 0.5, yend = 33000),
+               arrow = arrow(length = unit(0.3, "cm")), color="red") + 
+  geom_segment(aes(x = event_mask_day, y = 71000, 
+                   xend = event_mask_day + 0.5, yend = 66000),
+               arrow = arrow(length = unit(0.3, "cm")), color="red") +
+  geom_segment(aes(x = event_GeorgeFloyd_day, y = 28000, 
+                   xend = event_GeorgeFloyd_day + 0.5, yend = 23000),
+               arrow = arrow(length = unit(0.3, "cm")), color="red") +
+  geom_segment(aes(x = event_schools_day, y = 66000, 
+                   xend = event_schools_day + 0.5, yend = 61000),
                arrow = arrow(length = unit(0.3, "cm")), color="red") +
   theme_pubr(legend="right")
 
+# merge plot with facets
+ggarrange(plot_cases, plot_distress, plot_BAs, ncol=1, nrow=3, 
+          common.legend = F, align = "v")
+
 # save plot
-ggsave(plot=last_plot(), filename="Figures/BAs/BAs_all_perTime.png", 
-       width=20, height=12, units="cm") 
+ggsave(plot=last_plot(), filename="Figures/BAs/BAs_all_perTime_facets.png", 
+       width=18, height=27, units="cm") 
 
 
 
