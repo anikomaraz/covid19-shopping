@@ -39,9 +39,44 @@ table(data_shoppingCovid19$time_batch)
 # save the downloaded and the extracted dataset to the "Data" folder
 ## (Eva)
 
+#creat dataset data_covidCases
+library(readxl)
+library(dplyr)
+Covid19geograpicdistirbutionww <- read_xlsx("COVID-19-geographic-disbtribution-worldwide-2020-12-14.xlsx")
+data_covidCases <- Covid19geograpicdistirbutionww %>% 
+  filter(countryterritoryCode == "USA") %>% 
+  filter(dateRep > "2020-03-26") %>%
+  filter(dateRep < "2020-10-02") 
 
+min(data_covidCases$dateRep)
+max(data_covidCases$dateRep)
 
+data_covidCases <- data_covidCases %>% 
+ select(dateRep, countryterritoryCode, cases, deaths, popData2019, `Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)
 
+# create a new time variable: new formate of date 26.03.2020
+library(lubridate)
+date <- strptime(as.character(data_covidCases$dateRep), "%Y-%m-%d")
+date <- format(date, "%d.%m.%Y")
+
+data_covidCases <- data.frame(data_covidCases, date)
+data_covidCases <- data_covidCases %>% 
+  select(date, countryterritoryCode, cases, deaths, popData2019, Cumulative_number_for_14_days_of_COVID.19_cases_per_100000)
+
+#create a new variable "days_passed": 
+outbreak <- c("13.03.2020")
+data_covidCases <- data.frame(data_covidCases, outbreak)
+days_passed <- as.Date(as.character(data_covidCases$date), format="%d.%m.%Y")-
+  as.Date(as.character(data_covidCases$outbreak), format="%d.%m.%Y")
+days_passed <- as.numeric(days_passed)
+
+data_covidCases <- data_covidCases %>% 
+  select(date, countryterritoryCode, cases, deaths, popData2019, Cumulative_number_for_14_days_of_COVID.19_cases_per_100000)
+
+data_covidCases <- data.frame(data_covidCases, days_passed)
+
+#save data_covidCases
+write.csv(data_covidCases, file ="data_covidCases.csv")
 
 #######################################################
 ## settings for plots 

@@ -93,15 +93,14 @@ dataframeH2$BAs_overeating <- recode(var=dataframeH2$BAs_overeating,
                                      'somewhat'= 3; 'quite a lot'= 4; 'too much' = 5")
 
 #Correlations between each behavioural problem and PSS
-cor.test(dataframeH2$BAs_shopping, dataframeH2$PSS, method=c("spearman"), na.rm = T)
-cor.test(dataframeH2$BAs_alcohol, dataframeH2$PSS, method=c("spearman"), na.rm = T)
-cor.test(dataframeH2$BAs_smoking, dataframeH2$PSS, method=c("spearman"), na.rm = T)
-cor.test(dataframeH2$BAs_legal_drug, dataframeH2$PSS, method=c("spearman"), na.rm = T)
-cor.test(dataframeH2$BAs_illegal_drug, dataframeH2$PSS, method=c("spearman"), na.rm = T)
-cor.test(dataframeH2$BAs_gambling, dataframeH2$PSS, method=c("spearman"), na.rm = T)
-cor.test(dataframeH2$BAs_gaming, dataframeH2$PSS, method=c("spearman"), na.rm = T)
-cor.test(dataframeH2$BAs_overeating, dataframeH2$PSS, method=c("spearman"), na.rm = T) 
-
+cor.test(dataframeH2$BAs_shopping, dataframeH2$PSS, method="spearman", na.rm = T)
+cor.test(dataframeH2$BAs_alcohol, dataframeH2$PSS, method="spearman", na.rm = T)
+cor.test(dataframeH2$BAs_smoking, dataframeH2$PSS, method="spearman", na.rm = T)
+cor.test(dataframeH2$BAs_legal_drug, dataframeH2$PSS, method="spearman", na.rm = T)
+cor.test(dataframeH2$BAs_illegal_drug, dataframeH2$PSS, method="spearman", na.rm = T)
+cor.test(dataframeH2$BAs_gambling, dataframeH2$PSS, method="spearman", na.rm = T)
+cor.test(dataframeH2$BAs_gaming, dataframeH2$PSS, method="spearman", na.rm = T)
+cor.test(dataframeH2$BAs_overeating, dataframeH2$PSS, method="spearman", na.rm = T) 
 
 
 #######################################################
@@ -110,5 +109,25 @@ cor.test(dataframeH2$BAs_overeating, dataframeH2$PSS, method=c("spearman"), na.r
 # calculate a correlation coefficient (Kendall's rank correlation, but please calculate Spearman too for cross-checking) between each behavioural problem and the variable "stress_outbreak" - a one-item indicator
 # (Eva)
 
+dataframeH3 <- data.frame(dataframeH2[, 1:8], data_shoppingCovid19$stress_outbreak)
+colnames(dataframeH3)
+names(dataframeH3)[names(dataframeH3) == "data_shoppingCovid19.stress_outbreak"] <- "stress_outbreak"
 
+#Kendalls' rank correlation
+cor.test(dataframeH3$BAs_shopping, dataframeH3$stress_outbreak, method="kendall", na.rm = T)
+cor.test(dataframeH3$BAs_alcohol, dataframeH3$stress_outbreak, method="kendall", na.rm = T)
+cor.test(dataframeH3$BAs_smoking, dataframeH3$stress_outbreak, method="kendall", na.rm = T)
+cor.test(dataframeH3$BAs_legal_drug, dataframeH3$stress_outbreak, method="kendall", na.rm = T)
+cor.test(dataframeH3$BAs_illegal_drug, dataframeH3$stress_outbreak, method="kendall", na.rm = T)
+cor.test(dataframeH3$BAs_gambling, dataframeH3$stress_outbreak, method="kendall", na.rm = T)
+cor.test(dataframeH3$BAs_gaming, dataframeH3$stress_outbreak, method="kendall", na.rm = T)
+cor.test(dataframeH3$BAs_overeating, dataframeH3$stress_outbreak, method="kendall", na.rm = T)
 
+#Spearman Correlation
+cor.test(dataframeH3$BAs_shopping, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
+cor.test(dataframeH3$BAs_alcohol, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
+cor.test(dataframeH3$BAs_smoking, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
+cor.test(dataframeH3$BAs_legal_drug, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
+cor.test(dataframeH3$BAs_illegal_drug, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
+cor.test(dataframeH3$BAs_gambling, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
+cor.test(dataframeH3$BAs_overeating, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
