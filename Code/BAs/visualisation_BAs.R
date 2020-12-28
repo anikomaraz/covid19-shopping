@@ -192,7 +192,7 @@ ggplot() +
        y="Frequency",
        color="", group = "",
        title="How often did you engage in [name of the activity] in the past \n7 days?") +
-  scale_fill_manual(name = "", values = c(BA_colors8, "DISTRESS" = "grey30", "COVID19 STRESS" = "purple")) +
+  scale_fill_manual(name = "", values = c(BA_colors8, "DISTRESS" = "grey15", "COVID19 STRESS" = "purple")) +
   scale_x_continuous(breaks = seq(0, 200, by = 20)) +
   scale_y_continuous(breaks = seq(0, 3.5, by = 0.5)) +
   theme_pubr(legend="top") 
@@ -215,7 +215,7 @@ ggplot() +
        y="",
        color="", group = "",
        title="Distress during the outbreak") +
-  scale_fill_manual(name = "", values = c(BA_colors8, "DISTRESS" = "grey30", "COVID19 STRESS" = "purple")) +
+  scale_fill_manual(name = "", values = c(BA_colors8, "DISTRESS" = "grey15", "COVID19 STRESS" = "purple")) +
   scale_x_continuous(breaks = seq(0, 200, by = 20)) +
   theme_pubr(legend="top")
 
@@ -259,7 +259,7 @@ plot_cases <-
   theme_pubr(legend="right")
 
 # merge plot with facets
-ggarrange(plot_cases, plot_distress, plot_BAs, ncol=1, nrow=3, 
+ggarrange(plot_BAs, plot_distress, plot_cases, ncol=1, nrow=3, 
           common.legend = F, align = "v")
 
 # save plot
@@ -267,6 +267,8 @@ ggsave(plot=last_plot(), filename="Figures/BAs/BAs_all_perTime_facets.png",
        width=18, height=27, units="cm") 
 
 
+## PLOT CORR BETWEEN DISTRESS/COVID19 STRESS AND BEHAV.ADDICTIONS
+# EVA
 
 
 
