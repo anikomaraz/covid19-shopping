@@ -269,7 +269,53 @@ ggsave(plot=last_plot(), filename="Figures/BAs/BAs_all_perTime_facets.png",
 
 ## PLOT CORR BETWEEN DISTRESS/COVID19 STRESS AND BEHAV.ADDICTIONS
 # EVA
+# calculate Spearman correlation at each point of time between distress (PSS scale) and each behavioral addiction (variables starting with BAs_  but leave out the BAs_other) 
+plotcorrdisandBA<- data.frame(as.numeric(data_shoppingCovid19$BAs_shopping), as.numeric(data_shoppingCovid19$BAs_alcohol), 
+                         as.numeric(data_shoppingCovid19$BAs_smoking), as.numeric(data_shoppingCovid19$BAs_legal_drug),
+                         as.numeric(data_shoppingCovid19$BAs_illegal_drug), as.numeric(data_shoppingCovid19$BAs_gambling),
+                         as.numeric(data_shoppingCovid19$BAs_gaming), as.numeric(data_shoppingCovid19$BAs_overeating), data_shoppingCovid19$PSS, data_shoppingCovid19$stress_outbreak)
+#rename colums
+colnames(plotcorrdisandBA)
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_shopping."] <- "BAs_shopping"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_alcohol."] <- "BAs_alcohol"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_smoking."] <- "BAs_smoking"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_legal_drug."] <- "BAs_legal_drug"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_illegal_drug."] <- "BAs_illegal_drug"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_gambling."] <- "BAs_gambling"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_gaming."] <- "BAs_gaming"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_overeating."] <- "BAs_overeating"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.PSS"] <- "PSS"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.stress_outbreak"] <- "stress_outbreak"
 
+
+#Correlations between each behavioural problem and PSS
+ashopping<-cor.test(plotcorrdisandBA$BAs_shopping, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+aalcohol<-cor.test(plotcorrdisandBA$BAs_alcohol, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+asmoking<-cor.test(plotcorrdisandBA$BAs_smoking, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+alegaldrugs<-cor.test(plotcorrdisandBA$BAs_legal_drug, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+aillegaldrugs<-cor.test(plotcorrdisandBA$BAs_illegal_drug, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+agambling<-cor.test(plotcorrdisandBA$BAs_gambling, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+agaming<-cor.test(plotcorrdisandBA$BAs_gaming, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+aovereating<-cor.test(plotcorrdisandBA$BAs_overeating, plotcorrdisandBA$PSS, method="spearman", na.rm = T) 
+
+a<-c(ashopping$estimate, aalcohol$estimate, asmoking$estimate, alegaldrugs$estimate, aillegaldrugs$estimate, agambling$estimate, agaming$estimate, aovereating$estimate)
+
+#separately: Covid-19 stress (stress_outbreak variable) and each behavioural addiction. In total 8 behavioural addictions, meaning 16 correlations at each point of time. 
+cor.test(plotcorrdisandBA$BAs_shopping, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_alcohol, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_smoking, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_legal_drug, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_illegal_drug, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_gambling, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_gaming, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_overeating, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
+
+
+
+#create two plots, separately for distress, and for covid19 stress. The strength 
+#of the correlation should be on the y axis (mean + SE or SD calculated for each assessment), 
+#and time (days_passed) on the x axis, and of course a separate line for each behavioural addiction.
+plot(data_shoppingCovid19$time_days, a)
 
 
 # IGNORED PLOTS
