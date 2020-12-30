@@ -36,6 +36,8 @@ BAs <- c("BAs_shopping", "BAs_alcohol", "BAs_smoking",
 
 # test the linearity among correlation coefficients calculated at each point of time
 # (Eva)
+
+#make a nice new data.frame with all relevant variables for a great overview 
 plotcorrdisandBA<- data.frame(as.numeric(data_shoppingCovid19$BAs_shopping), as.numeric(data_shoppingCovid19$BAs_alcohol), 
                               as.numeric(data_shoppingCovid19$BAs_smoking), as.numeric(data_shoppingCovid19$BAs_legal_drug),
                               as.numeric(data_shoppingCovid19$BAs_illegal_drug), as.numeric(data_shoppingCovid19$BAs_gambling),
