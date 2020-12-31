@@ -270,10 +270,13 @@ ggsave(plot=last_plot(), filename="Figures/BAs/BAs_all_perTime_facets.png",
 ## PLOT CORR BETWEEN DISTRESS/COVID19 STRESS AND BEHAV.ADDICTIONS
 # EVA
 # calculate Spearman correlation at each point of time between distress (PSS scale) and each behavioral addiction (variables starting with BAs_  but leave out the BAs_other) 
+#make a nice new data.frame with all relevant variables for a great overview 
 plotcorrdisandBA<- data.frame(as.numeric(data_shoppingCovid19$BAs_shopping), as.numeric(data_shoppingCovid19$BAs_alcohol), 
-                         as.numeric(data_shoppingCovid19$BAs_smoking), as.numeric(data_shoppingCovid19$BAs_legal_drug),
-                         as.numeric(data_shoppingCovid19$BAs_illegal_drug), as.numeric(data_shoppingCovid19$BAs_gambling),
-                         as.numeric(data_shoppingCovid19$BAs_gaming), as.numeric(data_shoppingCovid19$BAs_overeating), data_shoppingCovid19$PSS, data_shoppingCovid19$stress_outbreak)
+                              as.numeric(data_shoppingCovid19$BAs_smoking), as.numeric(data_shoppingCovid19$BAs_legal_drug),
+                              as.numeric(data_shoppingCovid19$BAs_illegal_drug), as.numeric(data_shoppingCovid19$BAs_gambling),
+                              as.numeric(data_shoppingCovid19$BAs_gaming), as.numeric(data_shoppingCovid19$BAs_overeating), 
+                              as.numeric(data_shoppingCovid19$time_batch), data_shoppingCovid19$PSS, data_shoppingCovid19$stress_outbreak)
+
 #rename colums
 colnames(plotcorrdisandBA)
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_shopping."] <- "BAs_shopping"
@@ -284,40 +287,129 @@ names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovi
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_gambling."] <- "BAs_gambling"
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_gaming."] <- "BAs_gaming"
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_overeating."] <- "BAs_overeating"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.time_batch."] <- "time_batch"
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.PSS"] <- "PSS"
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.stress_outbreak"] <- "stress_outbreak"
+head(plotcorrdisandBA)
 
-
-#Correlations between each behavioural problem and PSS
-ashopping<-cor.test(plotcorrdisandBA$BAs_shopping, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
-aalcohol<-cor.test(plotcorrdisandBA$BAs_alcohol, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
-asmoking<-cor.test(plotcorrdisandBA$BAs_smoking, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
-alegaldrugs<-cor.test(plotcorrdisandBA$BAs_legal_drug, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
-aillegaldrugs<-cor.test(plotcorrdisandBA$BAs_illegal_drug, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
-agambling<-cor.test(plotcorrdisandBA$BAs_gambling, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
-agaming<-cor.test(plotcorrdisandBA$BAs_gaming, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
-aovereating<-cor.test(plotcorrdisandBA$BAs_overeating, plotcorrdisandBA$PSS, method="spearman", na.rm = T) 
-
-a<-c(ashopping$estimate, aalcohol$estimate, asmoking$estimate, alegaldrugs$estimate, aillegaldrugs$estimate, agambling$estimate, agaming$estimate, aovereating$estimate)
+# Spearman Correlations between each behavioural problem and PSS
+cor.test(plotcorrdisandBA$BAs_shopping, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_alcohol, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_smoking, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_legal_drug, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_illegal_drug, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_gambling, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_gaming, plotcorrdisandBA$PSS, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_overeating, plotcorrdisandBA$PSS, method="spearman", na.rm = T) 
 
 #separately: Covid-19 stress (stress_outbreak variable) and each behavioural addiction. In total 8 behavioural addictions, meaning 16 correlations at each point of time. 
-cor.test(plotcorrdisandBA$BAs_shopping, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
-cor.test(plotcorrdisandBA$BAs_alcohol, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
-cor.test(plotcorrdisandBA$BAs_smoking, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
-cor.test(plotcorrdisandBA$BAs_legal_drug, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
-cor.test(plotcorrdisandBA$BAs_illegal_drug, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
-cor.test(plotcorrdisandBA$BAs_gambling, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
-cor.test(plotcorrdisandBA$BAs_gaming, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
-cor.test(plotcorrdisandBA$BAs_overeating, plotcorrdisandBA$stress_outbreak, method="kendall", na.rm = T)
-
-
+cor.test(plotcorrdisandBA$BAs_shopping, plotcorrdisandBA$stress_outbreak, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_alcohol, plotcorrdisandBA$stress_outbreak, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_smoking, plotcorrdisandBA$stress_outbreak, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_legal_drug, plotcorrdisandBA$stress_outbreak, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_illegal_drug, plotcorrdisandBA$stress_outbreak, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_gambling, plotcorrdisandBA$stress_outbreak, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_gaming, plotcorrdisandBA$stress_outbreak, method="spearman", na.rm = T)
+cor.test(plotcorrdisandBA$BAs_overeating, plotcorrdisandBA$stress_outbreak, method="spearman", na.rm = T)
 
 #create two plots, separately for distress, and for covid19 stress. The strength 
 #of the correlation should be on the y axis (mean + SE or SD calculated for each assessment), 
 #and time (days_passed) on the x axis, and of course a separate line for each behavioural addiction.
-plot(data_shoppingCovid19$time_days, a)
 
 
+#calculate correlation between BAs and PSS 
+#shopping and PSS
+require(plyr)
+funcshopping <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORshopping = cor(plotcorrdisandBA$BAs_shopping, plotcorrdisandBA$PSS )))
+}
+ashopping <-ddply(plotcorrdisandBA, .(time_batch), funcshopping)
+
+#alcohol and PSS
+require(plyr)
+funcalcohol <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORalcohol = cor(plotcorrdisandBA$BAs_alcohol, plotcorrdisandBA$PSS )))
+}
+aalcohol <-ddply(plotcorrdisandBA, .(time_batch), funcalcohol)
+
+#smoking and PSS
+require(plyr)
+funcsmoking <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORsmoking = cor(plotcorrdisandBA$BAs_smoking, plotcorrdisandBA$PSS )))
+}
+asmoking <-ddply(plotcorrdisandBA, .(time_batch), funcsmoking)
+
+#legal drug and PSS
+require(plyr)
+funclegaldrug <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORlegaldrug = cor(plotcorrdisandBA$BAs_legal_drug, plotcorrdisandBA$PSS )))
+}
+alegaldrug <-ddply(plotcorrdisandBA, .(time_batch), funclegaldrug)
+
+#illegal drug and PSS
+require(plyr)
+funcillegaldrug <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORillegaldrug = cor(plotcorrdisandBA$BAs_illegal_drug, plotcorrdisandBA$PSS )))
+}
+aillegaldrug <-ddply(plotcorrdisandBA, .(time_batch), funcillegaldrug)
+
+#gambling and PSS
+require(plyr)
+funcgambling <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORgambling = cor(plotcorrdisandBA$BAs_gambling, plotcorrdisandBA$PSS )))
+}
+agambling <-ddply(plotcorrdisandBA, .(time_batch), funcgambling)
+
+#gaming and PSS
+require(plyr)
+funcgaming <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORgaming = cor(plotcorrdisandBA$BAs_gaming, plotcorrdisandBA$PSS )))
+}
+agaming <-ddply(plotcorrdisandBA, .(time_batch), funcgaming)
+
+#overeating and PSS
+require(plyr)
+funcovereating <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORovereating = cor(plotcorrdisandBA$BAs_overeating, plotcorrdisandBA$PSS )))
+}
+aovereating <-ddply(plotcorrdisandBA, .(time_batch), funcovereating)
+
+#make a dataframe for H1: Correlation BAs and PSS
+H1BAsPSS <- data.frame(ashopping, aalcohol$CORalcohol, asmoking$CORsmoking, alegaldrug$CORlegaldrug, aillegaldrug$CORillegaldrug , agambling$CORgambling, agaming$CORgaming, aovereating$CORovereating)
+colnames(H1BAsPSS) #tidying the colnames
+names(H1BAsPSS)[names(H1BAsPSS) == "aalcohol.CORalcohol"] <- "CORalcohol"
+names(H1BAsPSS)[names(H1BAsPSS) == "asmoking.CORsmoking"] <- "CORsmoking"
+names(H1BAsPSS)[names(H1BAsPSS) == "alegaldrug.CORlegaldrug"] <- "CORlegaldrug"
+names(H1BAsPSS)[names(H1BAsPSS) == "aillegaldrug.CORillegaldrug"] <- "CORillegaldrug"
+names(H1BAsPSS)[names(H1BAsPSS) == "agambling.CORgambling"] <- "CORgambling"
+names(H1BAsPSS)[names(H1BAsPSS) == "agaming.CORgaming"] <- "CORgaming"
+names(H1BAsPSS)[names(H1BAsPSS) == "aovereating.CORovereating"] <- "CORovereating"
+
+library(psych)
+describeBy(H1BAsPSS, group = H1BAsPSS$time_batch, na.rm = T)
+
+pairs(H1BAsPSS[,2:9], pch = 19, lower.panel = NULL, )
+
+
+
+library(plyr)
+MeanSDBA <- ddply(H1BAsPSS, .(time_batch), summarize, MeanCORshopping=mean(CORshopping), SDCORshopping=sd(CORshopping), 
+                MeanCORalcohol=mean(CORalcohol), SDCORalcohol=sd(CORalcohol), MeanCORsmoking=mean(CORsmoking), SDCORsmoking=sd(CORsmoking), 
+                MeanCORlegaldrug=mean(CORlegaldrug), SDCORlegaldrug=sd(CORlegaldrug), MeanCORillegaldrug=mean(CORillegaldrug), SDCORillegaldrug=sd(CORillegaldrug),
+                MeanCORgambling=mean(CORgambling), SDCORgambling=sd(CORgambling), MeanCORgaming=mean(CORgaming), SDCORgaming=sd(CORgaming), 
+                MeanCORovereating=mean(CORovereating), SDCORovereating=sd(CORovereating))
+
+
+
+plot(MeanSDBA$MeanCORshopping, H1BAsPSS$time_batch)
 # IGNORED PLOTS
 
 
