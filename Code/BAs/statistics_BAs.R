@@ -60,7 +60,7 @@ names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.stress_
 head(plotcorrdisandBA)
 
 #calculate correlation between BAs and PSS 
-#shopping
+#shopping and PSS
 require(plyr)
 funcshopping <- function(plotcorrdisandBA)
 {
@@ -68,7 +68,7 @@ funcshopping <- function(plotcorrdisandBA)
 }
 ashopping <-ddply(plotcorrdisandBA, .(time_batch), funcshopping)
 
-#alcohol
+#alcohol and PSS
 require(plyr)
 funcalcohol <- function(plotcorrdisandBA)
 {
@@ -76,7 +76,7 @@ funcalcohol <- function(plotcorrdisandBA)
 }
 aalcohol <-ddply(plotcorrdisandBA, .(time_batch), funcalcohol)
 
-#smoking
+#smoking and PSS
 require(plyr)
 funcsmoking <- function(plotcorrdisandBA)
 {
@@ -84,7 +84,7 @@ funcsmoking <- function(plotcorrdisandBA)
 }
 asmoking <-ddply(plotcorrdisandBA, .(time_batch), funcsmoking)
 
-#legal drug
+#legal drug and PSS
 require(plyr)
 funclegaldrug <- function(plotcorrdisandBA)
 {
@@ -92,7 +92,7 @@ funclegaldrug <- function(plotcorrdisandBA)
 }
 alegaldrug <-ddply(plotcorrdisandBA, .(time_batch), funclegaldrug)
 
-#illegal drug
+#illegal drug and PSS
 require(plyr)
 funcillegaldrug <- function(plotcorrdisandBA)
 {
@@ -100,7 +100,7 @@ funcillegaldrug <- function(plotcorrdisandBA)
 }
 aillegaldrug <-ddply(plotcorrdisandBA, .(time_batch), funcillegaldrug)
 
-#gambling
+#gambling and PSS
 require(plyr)
 funcgambling <- function(plotcorrdisandBA)
 {
@@ -108,7 +108,7 @@ funcgambling <- function(plotcorrdisandBA)
 }
 agambling <-ddply(plotcorrdisandBA, .(time_batch), funcgambling)
 
-#gaming
+#gaming and PSS
 require(plyr)
 funcgaming <- function(plotcorrdisandBA)
 {
@@ -116,7 +116,7 @@ funcgaming <- function(plotcorrdisandBA)
 }
 agaming <-ddply(plotcorrdisandBA, .(time_batch), funcgaming)
 
-#overeating
+#overeating and PSS
 require(plyr)
 funcovereating <- function(plotcorrdisandBA)
 {
@@ -137,7 +137,7 @@ names(H1BAsPSS)[names(H1BAsPSS) == "aovereating.CORovereating"] <- "CORovereatin
 
 
 #calculate correlation between BAs and stress_outbreak
-#shopping
+#shoppingand stress_outbreak
 require(plyr)
 funcshoppingb <- function(plotcorrdisandBA)
 {
@@ -145,7 +145,7 @@ funcshoppingb <- function(plotcorrdisandBA)
 }
 bshopping <-ddply(plotcorrdisandBA, .(time_batch), funcshoppingb)
 
-#alcohol
+#alcohol and stress_outbreak
 require(plyr)
 funcalcoholb <- function(plotcorrdisandBA)
 {
@@ -153,7 +153,7 @@ funcalcoholb <- function(plotcorrdisandBA)
 }
 balcohol <-ddply(plotcorrdisandBA, .(time_batch), funcalcoholb)
 
-#smoking
+#smoking and stress_outbreak
 require(plyr)
 funcsmokingb <- function(plotcorrdisandBA)
 {
@@ -161,7 +161,7 @@ funcsmokingb <- function(plotcorrdisandBA)
 }
 bsmoking <-ddply(plotcorrdisandBA, .(time_batch), funcsmokingb)
 
-#legal drug
+#legal drug and stress_outbreak
 require(plyr)
 funclegaldrugb <- function(plotcorrdisandBA)
 {
@@ -169,7 +169,7 @@ funclegaldrugb <- function(plotcorrdisandBA)
 }
 blegaldrug <-ddply(plotcorrdisandBA, .(time_batch), funclegaldrugb)
 
-#illegal drug
+#illegal drug and stress_outbreak
 require(plyr)
 funcillegaldrugb <- function(plotcorrdisandBA)
 {
@@ -177,7 +177,7 @@ funcillegaldrugb <- function(plotcorrdisandBA)
 }
 billegaldrug <-ddply(plotcorrdisandBA, .(time_batch), funcillegaldrugb)
 
-#gambling
+#gambling and stress_outbreak
 require(plyr)
 funcgamblingb <- function(plotcorrdisandBA)
 {
@@ -185,7 +185,7 @@ funcgamblingb <- function(plotcorrdisandBA)
 }
 bgambling <-ddply(plotcorrdisandBA, .(time_batch), funcgamblingb)
 
-#gaming
+#gaming and stress_outbreak
 require(plyr)
 funcgamingb <- function(plotcorrdisandBA)
 {
@@ -193,7 +193,7 @@ funcgamingb <- function(plotcorrdisandBA)
 }
 bgaming <-ddply(plotcorrdisandBA, .(time_batch), funcgamingb)
 
-#overeating
+#overeating and stress_outbreak
 require(plyr)
 funcovereatingb <- function(plotcorrdisandBA)
 {
