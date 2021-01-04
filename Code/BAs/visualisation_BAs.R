@@ -452,8 +452,8 @@ names(MeanSDBAfinish)[names(MeanSDBAfinish) == "MeanSDBA.time_batch"] <- "time_b
 
 #plot: x-asis time_batch; y-asis Mean of the Correlation (BAs and PSS)
 library(plotly)
-p <- ggplot(MeanSDBAfinish, aes(x=time_batch, y=Mean, group=Name, color = Name)) +
-  geom_line() +
+p <- ggplot(MeanSDBAfinish, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
   geom_point() +
   scale_colour_discrete("BAs")
 fig <- ggplotly(p)
