@@ -450,6 +450,7 @@ MeanSDBAfinish <- bind_rows(MeanSDBAalcohol, MeanSDBAshopping, MeanSDBAsmoking, 
 colnames(MeanSDBAfinish) #tidying the colnames
 names(MeanSDBAfinish)[names(MeanSDBAfinish) == "MeanSDBA.time_batch"] <- "time_batch"
 
+#plot: x-asis time_batch; y-asis Mean of the Correlation (BAs and PSS)
 library(plotly)
 p <- ggplot(MeanSDBAfinish, aes(x=time_batch, y=Mean, group=Name, color = Name)) +
   geom_line() +
@@ -459,8 +460,6 @@ fig <- ggplotly(p)
 fig
 
 
-
-plot(MeanSDBA$MeanCORshopping, H1BAsPSS$time_batch)
 # IGNORED PLOTS
 
 
