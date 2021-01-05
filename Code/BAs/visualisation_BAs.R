@@ -517,6 +517,212 @@ pgamblinggaming <- ggplot(MeanSDBAgamblinggaming, aes(x=time_batch, y=Mean, grou
 figgamblinggaming <- ggplotly(pgamblinggaming)
 figgamblinggaming
 
+#calculate correlation between BAs and stress_outbreak
+#shoppingand stress_outbreak
+require(plyr)
+funcshoppingb <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORshopping = cor(plotcorrdisandBA$BAs_shopping, plotcorrdisandBA$stress_outbreak)))
+}
+bshopping <-ddply(plotcorrdisandBA, .(time_batch), funcshoppingb)
+
+#alcohol and stress_outbreak
+require(plyr)
+funcalcoholb <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORalcohol = cor(plotcorrdisandBA$BAs_alcohol, plotcorrdisandBA$stress_outbreak)))
+}
+balcohol <-ddply(plotcorrdisandBA, .(time_batch), funcalcoholb)
+
+#smoking and stress_outbreak
+require(plyr)
+funcsmokingb <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORsmoking = cor(plotcorrdisandBA$BAs_smoking, plotcorrdisandBA$stress_outbreak)))
+}
+bsmoking <-ddply(plotcorrdisandBA, .(time_batch), funcsmokingb)
+
+#legal drug and stress_outbreak
+require(plyr)
+funclegaldrugb <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORlegaldrug = cor(plotcorrdisandBA$BAs_legal_drug, plotcorrdisandBA$stress_outbreak)))
+}
+blegaldrug <-ddply(plotcorrdisandBA, .(time_batch), funclegaldrugb)
+
+#illegal drug and stress_outbreak
+require(plyr)
+funcillegaldrugb <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORillegaldrug = cor(plotcorrdisandBA$BAs_illegal_drug, plotcorrdisandBA$stress_outbreak)))
+}
+billegaldrug <-ddply(plotcorrdisandBA, .(time_batch), funcillegaldrugb)
+
+#gambling and stress_outbreak
+require(plyr)
+funcgamblingb <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORgambling = cor(plotcorrdisandBA$BAs_gambling, plotcorrdisandBA$stress_outbreak)))
+}
+bgambling <-ddply(plotcorrdisandBA, .(time_batch), funcgamblingb)
+
+#gaming and stress_outbreak
+require(plyr)
+funcgamingb <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORgaming = cor(plotcorrdisandBA$BAs_gaming, plotcorrdisandBA$stress_outbreak)))
+}
+bgaming <-ddply(plotcorrdisandBA, .(time_batch), funcgamingb)
+
+#overeating and stress_outbreak
+require(plyr)
+funcovereatingb <- function(plotcorrdisandBA)
+{
+  return(data.frame(CORovereating = cor(plotcorrdisandBA$BAs_overeating, plotcorrdisandBA$stress_outbreak)))
+}
+bovereating <-ddply(plotcorrdisandBA, .(time_batch), funcovereatingb)
+
+#make a dataframe for H1: Correlation BAs and stress_outbreak
+H1BAsstressoutbreak <- data.frame(bshopping, balcohol$CORalcohol, bsmoking$CORsmoking, blegaldrug$CORlegaldrug, billegaldrug$CORillegaldrug , bgambling$CORgambling, bgaming$CORgaming, bovereating$CORovereating)
+colnames(H1BAsstressoutbreak) #tidying the colnames
+names(H1BAsstressoutbreak)[names(H1BAsstressoutbreak) == "balcohol.CORalcohol"] <- "CORalcohol"
+names(H1BAsstressoutbreak)[names(H1BAsstressoutbreak) == "bsmoking.CORsmoking"] <- "CORsmoking"
+names(H1BAsstressoutbreak)[names(H1BAsstressoutbreak) == "blegaldrug.CORlegaldrug"] <- "CORlegaldrug"
+names(H1BAsstressoutbreak)[names(H1BAsstressoutbreak) == "billegaldrug.CORillegaldrug"] <- "CORillegaldrug"
+names(H1BAsstressoutbreak)[names(H1BAsstressoutbreak) == "bgambling.CORgambling"] <- "CORgambling"
+names(H1BAsstressoutbreak)[names(H1BAsstressoutbreak) == "bgaming.CORgaming"] <- "CORgaming"
+names(H1BAsstressoutbreak)[names(H1BAsstressoutbreak) == "bovereating.CORovereating"] <- "CORovereating"
+
+#calculation means and sd für every BAs
+library(plyr)
+MeanSDBAstress <- ddply(H1BAsstressoutbreak, .(time_batch), summarize, MeanCORshopping=mean(CORshopping), SDCORshopping=sd(CORshopping), 
+                  MeanCORalcohol=mean(CORalcohol), SDCORalcohol=sd(CORalcohol), MeanCORsmoking=mean(CORsmoking), SDCORsmoking=sd(CORsmoking), 
+                  MeanCORlegaldrug=mean(CORlegaldrug), SDCORlegaldrug=sd(CORlegaldrug), MeanCORillegaldrug=mean(CORillegaldrug), SDCORillegaldrug=sd(CORillegaldrug),
+                  MeanCORgambling=mean(CORgambling), SDCORgambling=sd(CORgambling), MeanCORgaming=mean(CORgaming), SDCORgaming=sd(CORgaming), 
+                  MeanCORovereating=mean(CORovereating), SDCORovereating=sd(CORovereating))
+
+#sorting data
+MeanSDBAstressshopping <- data.frame(MeanSDBAstress$time_batch, MeanSDBAstress$MeanCORshopping, c("MeanCORshopping"))
+colnames(MeanSDBAstressshopping) #tidying the colnames
+names(MeanSDBAstressshopping)[names(MeanSDBAstressshopping) == "MeanSDBAstress.MeanCORshopping"] <- "Mean"
+names(MeanSDBAstressshopping)[names(MeanSDBAstressshopping) == "c..MeanCORshopping.."] <- "Name"
+names(MeanSDBAstressshopping)[names(MeanSDBAstressshopping) == "MeanSDBAstress.time_batch"] <- "time_batch"
+
+MeanSDBAstressalcohol <- data.frame(MeanSDBAstress$time_batch, MeanSDBAstress$MeanCORalcohol, c("MeanCORalcohol"))
+colnames(MeanSDBAstressalcohol) #tidying the colnames
+names(MeanSDBAstressalcohol)[names(MeanSDBAstressalcohol) == "MeanSDBAstress.MeanCORalcohol"] <- "Mean"
+names(MeanSDBAstressalcohol)[names(MeanSDBAstressalcohol) == "c..MeanCORalcohol.."] <- "Name"
+names(MeanSDBAstressalcohol)[names(MeanSDBAstressalcohol) == "MeanSDBAstress.time_batch"] <- "time_batch"
+
+MeanSDBAstresssmoking <- data.frame(MeanSDBAstress$time_batch, MeanSDBAstress$MeanCORsmoking, c("MeanCORsmoking"))
+colnames(MeanSDBAstresssmoking) #tidying the colnames
+names(MeanSDBAstresssmoking)[names(MeanSDBAstresssmoking) == "MeanSDBAstress.MeanCORsmoking"] <- "Mean"
+names(MeanSDBAstresssmoking)[names(MeanSDBAstresssmoking) == "c..MeanCORsmoking.."] <- "Name"
+names(MeanSDBAstresssmoking)[names(MeanSDBAstresssmoking) == "MeanSDBAstress.time_batch"] <- "time_batch"
+
+MeanSDBAstresslegaldrug <- data.frame(MeanSDBAstress$time_batch, MeanSDBAstress$MeanCORlegaldrug, c("MeanCORlegaldrug"))
+colnames(MeanSDBAstresslegaldrug) #tidying the colnames
+names(MeanSDBAstresslegaldrug)[names(MeanSDBAstresslegaldrug) == "MeanSDBAstress.MeanCORlegaldrug"] <- "Mean"
+names(MeanSDBAstresslegaldrug)[names(MeanSDBAstresslegaldrug) == "c..MeanCORlegaldrug.."] <- "Name"
+names(MeanSDBAstresslegaldrug)[names(MeanSDBAstresslegaldrug) == "MeanSDBAstress.time_batch"] <- "time_batch"
+
+MeanSDBAstressillegaldrug <- data.frame(MeanSDBAstress$time_batch, MeanSDBAstress$MeanCORillegaldrug, c("MeanCORillegaldrug"))
+colnames(MeanSDBAstressillegaldrug) #tidying the colnames
+names(MeanSDBAstressillegaldrug)[names(MeanSDBAstressillegaldrug) == "MeanSDBAstress.MeanCORillegaldrug"] <- "Mean"
+names(MeanSDBAstressillegaldrug)[names(MeanSDBAstressillegaldrug) == "c..MeanCORillegaldrug.."] <- "Name"
+names(MeanSDBAstressillegaldrug)[names(MeanSDBAstressillegaldrug) == "MeanSDBAstress.time_batch"] <- "time_batch"
+
+MeanSDBAstressgambling <- data.frame(MeanSDBAstress$time_batch, MeanSDBAstress$MeanCORgambling, c("MeanCORgambling"))
+colnames(MeanSDBAstressgambling) #tidying the colnames
+names(MeanSDBAstressgambling)[names(MeanSDBAstressgambling) == "MeanSDBAstress.MeanCORgambling"] <- "Mean"
+names(MeanSDBAstressgambling)[names(MeanSDBAstressgambling) == "c..MeanCORgambling.."] <- "Name"
+names(MeanSDBAstressgambling)[names(MeanSDBAstressgambling) == "MeanSDBAstress.time_batch"] <- "time_batch"
+
+MeanSDBAstressgaming <- data.frame(MeanSDBAstress$time_batch, MeanSDBAstress$MeanCORgaming, c("MeanCORgaming"))
+colnames(MeanSDBAstressgaming) #tidying the colnames
+names(MeanSDBAstressgaming)[names(MeanSDBAstressgaming) == "MeanSDBAstress.MeanCORgaming"] <- "Mean"
+names(MeanSDBAstressgaming)[names(MeanSDBAstressgaming) == "c..MeanCORgaming.."] <- "Name"
+names(MeanSDBAstressgaming)[names(MeanSDBAstressgaming) == "MeanSDBAstress.time_batch"] <- "time_batch"
+
+MeanSDBAstressovereating <- data.frame(MeanSDBAstress$time_batch, MeanSDBAstress$MeanCORovereating, c("MeanCORovereating"))
+colnames(MeanSDBAstressovereating) #tidying the colnames
+names(MeanSDBAstressovereating)[names(MeanSDBAstressovereating) == "MeanSDBAstress.MeanCORovereating"] <- "Mean"
+names(MeanSDBAstressovereating)[names(MeanSDBAstressovereating) == "c..MeanCORovereating.."] <- "Name"
+names(MeanSDBAstressovereating)[names(MeanSDBAstressovereating) == "MeanSDBAstress.time_batch"] <- "time_batch"
+
+#merge all subframes into a dataframe 
+MeanSDBAstressfinish <- bind_rows(MeanSDBAstressalcohol, MeanSDBAstressshopping, MeanSDBAstresssmoking, MeanSDBAstresslegaldrug, MeanSDBAstressillegaldrug, MeanSDBAstressgambling, MeanSDBAstressgaming, MeanSDBAstressovereating)
+colnames(MeanSDBAstressfinish) #tidying the colnames
+names(MeanSDBAstressfinish)[names(MeanSDBAstressfinish) == "MeanSDBA.time_batch"] <- "time_batch"
+
+#plot: x-asis time_batch; y-asis Mean of the Correlation (BAs and stress_outbreak)
+library(plotly)
+pstressfinish <- ggplot(MeanSDBAstressfinish, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figstressfinish <- ggplotly(pstressfinish)
+figstressfinish #it looks too messy --> merge two BAs into a plot 
+
+#merge two subframes into a dataframe 
+#BA shopping and alcohol
+MeanSDBAstressshoppingalcohol <- bind_rows(MeanSDBAstressalcohol, MeanSDBAstressshopping)
+colnames(MeanSDBAstressshoppingalcohol) #tidying the colnames
+names(MeanSDBAstressshoppingalcohol)[names(MeanSDBAstressshoppingalcohol) == "MeanSDBA.time_batch"] <- "time_batch"
+
+#merge two subframes into a dataframe 
+#BA smoking and overeating
+MeanSDBAstresssmokingovereating <- bind_rows(MeanSDBAstresssmoking, MeanSDBAstressovereating)
+colnames(MeanSDBAstresssmokingovereating) #tidying the colnames
+names(MeanSDBAstresssmokingovereating)[names(MeanSDBAstresssmokingovereating) == "MeanSDBA.time_batch"] <- "time_batch"
+
+#merge two subframes into a dataframe 
+#BA legal and illegal drug
+MeanSDBAstresslegalillegaldrug <- bind_rows(MeanSDBAstresslegaldrug, MeanSDBAstressillegaldrug)
+colnames(MeanSDBAstresslegalillegaldrug) #tidying the colnames
+names(MeanSDBAstresslegalillegaldrug)[names(MeanSDBAstresslegalillegaldrug) == "MeanSDBA.time_batch"] <- "time_batch"
+
+#merge two subframes into a dataframe 
+#BA gambling and gaming
+MeanSDBAstressgamblinggaming <- bind_rows(MeanSDBAstressgambling, MeanSDBAstressgaming)
+colnames(MeanSDBAstressgamblinggaming) #tidying the colnames
+names(MeanSDBAstressgamblinggaming)[names(MeanSDBAstressgamblinggaming) == "MeanSDBA.time_batch"] <- "time_batch"
+
+
+#plot: x-asis time_batch; y-asis Mean of the Correlation (BAs and stress_outbreak) 
+#BA alcohol and shopping into one
+pstressshoppingalcohol <- ggplot(MeanSDBAstressshoppingalcohol, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figstressshoppingalcohol <- ggplotly(pstressshoppingalcohol)
+figstressshoppingalcohol
+
+#BA smoking and overeating into one
+pstresssmokingovereating <- ggplot(MeanSDBAstresssmokingovereating, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figstresssmokingovereating <- ggplotly(pstresssmokingovereating)
+figstresssmokingovereating
+
+#BA legal and illegal drug 
+pstresslegalillegaldrug <- ggplot(MeanSDBAstresslegalillegaldrug, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figstresslegalillegaldrug <- ggplotly(pstresslegalillegaldrug)
+figstresslegalillegaldrug
+
+#BA gambling and gaming
+pstressgamblinggaming <- ggplot(MeanSDBAstressgamblinggaming, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figstressgamblinggaming <- ggplotly(pstressgamblinggaming)
+figstressgamblinggaming
+
+
 # IGNORED PLOTS
 
 
