@@ -445,20 +445,77 @@ colnames(MeanSDBAovereating) #tidying the colnames
 names(MeanSDBAovereating)[names(MeanSDBAovereating) == "MeanSDBA.MeanCORovereating"] <- "Mean"
 names(MeanSDBAovereating)[names(MeanSDBAovereating) == "c..MeanCORovereating.."] <- "Name"
 
-#merge all subframes into a dataframe
+#merge all subframes into a dataframe 
 MeanSDBAfinish <- bind_rows(MeanSDBAalcohol, MeanSDBAshopping, MeanSDBAsmoking, MeanSDBAlegaldrug, MeanSDBAillegaldrug, MeanSDBAgambling, MeanSDBAgaming, MeanSDBAovereating)
 colnames(MeanSDBAfinish) #tidying the colnames
 names(MeanSDBAfinish)[names(MeanSDBAfinish) == "MeanSDBA.time_batch"] <- "time_batch"
 
 #plot: x-asis time_batch; y-asis Mean of the Correlation (BAs and PSS)
 library(plotly)
-p <- ggplot(MeanSDBAfinish, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+pfinish <- ggplot(MeanSDBAfinish, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
   geom_smooth(method = "lm")+
   geom_point() +
   scale_colour_discrete("BAs")
-fig <- ggplotly(p)
-fig
+figfinish <- ggplotly(pfinish)
+figfinish #it looks too messy --> merge two BAs into a plot 
 
+#merge two subframes into a dataframe 
+#BA shopping and alcohol
+MeanSDBAshoppingalcohol <- bind_rows(MeanSDBAalcohol, MeanSDBAshopping)
+colnames(MeanSDBAshoppingalcohol) #tidying the colnames
+names(MeanSDBAshoppingalcohol)[names(MeanSDBAshoppingalcohol) == "MeanSDBA.time_batch"] <- "time_batch"
+
+#merge two subframes into a dataframe 
+#BA smoking and overeating
+MeanSDBAsmokingovereating <- bind_rows(MeanSDBAsmoking, MeanSDBAovereating)
+colnames(MeanSDBAsmokingovereating) #tidying the colnames
+names(MeanSDBAsmokingovereating)[names(MeanSDBAsmokingovereating) == "MeanSDBA.time_batch"] <- "time_batch"
+
+#merge two subframes into a dataframe 
+#BA legal and illegal drug
+MeanSDBAlegalillegaldrug <- bind_rows(MeanSDBAlegaldrug, MeanSDBAillegaldrug)
+colnames(MeanSDBAlegalillegaldrug) #tidying the colnames
+names(MeanSDBAlegalillegaldrug)[names(MeanSDBAlegalillegaldrug) == "MeanSDBA.time_batch"] <- "time_batch"
+
+#merge two subframes into a dataframe 
+#BA gambling and gaming
+MeanSDBAgamblinggaming <- bind_rows(MeanSDBAgambling, MeanSDBAgaming)
+colnames(MeanSDBAgamblinggaming) #tidying the colnames
+names(MeanSDBAgamblinggaming)[names(MeanSDBAgamblinggaming) == "MeanSDBA.time_batch"] <- "time_batch"
+
+
+#plot: x-asis time_batch; y-asis Mean of the Correlation (BAs and PSS) 
+#BA alcohol and shopping into one
+pshoppingalcohol <- ggplot(MeanSDBAshoppingalcohol, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figshoppingalcohol <- ggplotly(pshoppingalcohol)
+figshoppingalcohol
+
+#BA smoking and overeating into one
+psmokingovereating <- ggplot(MeanSDBAsmokingovereating, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figsmokingovereating <- ggplotly(psmokingovereating)
+figsmokingovereating
+
+#BA legal and illegal drug 
+plegalillegaldrug <- ggplot(MeanSDBAlegalillegaldrug, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figlegalillegaldrug <- ggplotly(plegalillegaldrug)
+figlegalillegaldrug
+
+#BA gambling and gaming
+pgamblinggaming <- ggplot(MeanSDBAgamblinggaming, aes(x=time_batch, y=Mean, group=Name, color = Name, span = 0.3)) +
+  geom_smooth(method = "lm")+
+  geom_point() +
+  scale_colour_discrete("BAs")
+figgamblinggaming <- ggplotly(pgamblinggaming)
+figgamblinggaming
 
 # IGNORED PLOTS
 
