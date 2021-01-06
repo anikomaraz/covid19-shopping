@@ -30,10 +30,56 @@ dim(data_shoppingCovid19)
 #######################################################
 ## H1: The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
 #######################################################
+# transform BA variables into numeric (from factor)
 BAs <- c("BAs_shopping", "BAs_alcohol", "BAs_smoking",
          "BAs_legal_drug", "BAs_illegal_drug", "BAs_gambling", 
          "BAs_gaming", "BAs_overeating")
 
+data_shoppingCovid19[BAs] <- sapply(data_shoppingCovid19[BAs], as.numeric)
+
+# calculate correlation
+data_corr_stressOutbr_BAs <- 
+  join_all(list(
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "corr_StressOutbr_BAs_shopping" = cor(as.numeric(BAs_shopping), stress_outbreak,
+                                                method = "spearman")),
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "corr_StressOutbr_BAs_alcohol" = cor(as.numeric(BAs_alcohol), stress_outbreak,
+                                               method = "spearman")),
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "corr_StressOutbr_BAs_smoking" = cor(as.numeric(BAs_smoking), stress_outbreak,
+                                               method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "corr_StressOutbr_BAs_legal_drug" = cor(as.numeric(BAs_legal_drug), stress_outbreak,
+                                               method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "corr_StressOutbr_BAs_illegal_drug" = cor(as.numeric(BAs_illegal_drug), stress_outbreak,
+                                               method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "corr_StressOutbr_BAs_gambling" = cor(as.numeric(BAs_gambling), stress_outbreak,
+                                               method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "corr_StressOutbr_BAs_gaming" = cor(as.numeric(BAs_gaming), stress_outbreak,
+                                                method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "corr_StressOutbr_BAs_overeating" = cor(as.numeric(BAs_overeating), stress_outbreak,
+                                              method = "spearman"))
+    
+  )
+    , by="time_batch", type="full")
+
+
+
+            
+            
 # test the linearity among correlation coefficients calculated at each point of time
 # (Eva)
 
