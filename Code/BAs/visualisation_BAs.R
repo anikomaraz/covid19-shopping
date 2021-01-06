@@ -2,7 +2,6 @@
 #######################################################
 ## packages and version setup
 #######################################################
-
 # ensure version compatibility
 # library(checkpoint)
 # checkpoint("2020-04-15")
