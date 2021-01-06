@@ -42,43 +42,88 @@ data_corr_stressOutbr_BAs <-
   join_all(list(
     ddply(data_shoppingCovid19, .(time_batch), 
           summarise, 
-          "corr_StressOutbr_BAs_shopping" = cor(as.numeric(BAs_shopping), stress_outbreak,
+          "BAs_shopping" = cor(as.numeric(BAs_shopping), stress_outbreak,
                                                 method = "spearman")),
     ddply(data_shoppingCovid19, .(time_batch), 
           summarise, 
-          "corr_StressOutbr_BAs_alcohol" = cor(as.numeric(BAs_alcohol), stress_outbreak,
+          "BAs_alcohol" = cor(as.numeric(BAs_alcohol), stress_outbreak,
                                                method = "spearman")),
     ddply(data_shoppingCovid19, .(time_batch), 
           summarise, 
-          "corr_StressOutbr_BAs_smoking" = cor(as.numeric(BAs_smoking), stress_outbreak,
+          "BAs_smoking" = cor(as.numeric(BAs_smoking), stress_outbreak,
                                                method = "spearman")), 
     ddply(data_shoppingCovid19, .(time_batch), 
           summarise, 
-          "corr_StressOutbr_BAs_legal_drug" = cor(as.numeric(BAs_legal_drug), stress_outbreak,
+          "BAs_legal_drug" = cor(as.numeric(BAs_legal_drug), stress_outbreak,
                                                method = "spearman")), 
     ddply(data_shoppingCovid19, .(time_batch), 
           summarise, 
-          "corr_StressOutbr_BAs_illegal_drug" = cor(as.numeric(BAs_illegal_drug), stress_outbreak,
+          "BAs_illegal_drug" = cor(as.numeric(BAs_illegal_drug), stress_outbreak,
                                                method = "spearman")), 
     ddply(data_shoppingCovid19, .(time_batch), 
           summarise, 
-          "corr_StressOutbr_BAs_gambling" = cor(as.numeric(BAs_gambling), stress_outbreak,
+          "BAs_gambling" = cor(as.numeric(BAs_gambling), stress_outbreak,
                                                method = "spearman")), 
     ddply(data_shoppingCovid19, .(time_batch), 
           summarise, 
-          "corr_StressOutbr_BAs_gaming" = cor(as.numeric(BAs_gaming), stress_outbreak,
+          "BAs_gaming" = cor(as.numeric(BAs_gaming), stress_outbreak,
                                                 method = "spearman")), 
     ddply(data_shoppingCovid19, .(time_batch), 
           summarise, 
-          "corr_StressOutbr_BAs_overeating" = cor(as.numeric(BAs_overeating), stress_outbreak,
+          "BAs_overeating" = cor(as.numeric(BAs_overeating), stress_outbreak,
                                               method = "spearman"))
     
   )
     , by="time_batch", type="full")
 
+# correlation with PSS
+data_corr_PSS_BAs <- 
+  join_all(list(
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "BAs_shopping" = cor(as.numeric(BAs_shopping), PSS,
+                               method = "spearman")),
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "BAs_alcohol" = cor(as.numeric(BAs_alcohol), PSS,
+                              method = "spearman")),
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "BAs_smoking" = cor(as.numeric(BAs_smoking), PSS,
+                              method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "BAs_legal_drug" = cor(as.numeric(BAs_legal_drug), PSS,
+                                 method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "BAs_illegal_drug" = cor(as.numeric(BAs_illegal_drug), PSS,
+                                   method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "BAs_gambling" = cor(as.numeric(BAs_gambling), PSS,
+                               method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "BAs_gaming" = cor(as.numeric(BAs_gaming), PSS,
+                             method = "spearman")), 
+    ddply(data_shoppingCovid19, .(time_batch), 
+          summarise, 
+          "BAs_overeating" = cor(as.numeric(BAs_overeating), PSS,
+                                 method = "spearman"))
+    
+  )
+  , by="time_batch", type="full")
 
 
-            
+# join data by keeping the type of stress 
+data_corr_stressType <- bind_rows(list(data_corr_stressOutbr_BAs, data_corr_PSS_BAs), .id="stress_type")
+data_corr_stressType$stress_type <- as.factor(data_corr_stressType$stress_type)
+data_corr_stressType$stress_type <- recode(data_corr_stressType$stress_type, "1" = "stress_outbreak", "2" = "PSS")
+
+
+
+
             
 # test the linearity among correlation coefficients calculated at each point of time
 # (Eva)
