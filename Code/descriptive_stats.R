@@ -149,6 +149,14 @@ for (i in 1:length(names(data_scales_continous))) {
 # print descriptive dataframe
 print(round(descriptive_scales, 3))
 
+#######################################################
+## omega for scales
+#######################################################
+# PSS
+pss_items <- data_shoppingCovid19[, c("pss_1", "pss_2", "pss_3", "pss_4r", "pss_5r", 
+                                      "pss_6r", "pss_7r", "pss_8", "pss_9r", "pss_10r", 
+                                      "pss_11", "pss_12", "pss_13r", "pss_14")]
+psych::omega(pss_items, nfactors = 1)
 
 #######################################################
 ## save final data with scales and factor levels adjusted

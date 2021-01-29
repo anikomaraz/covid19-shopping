@@ -149,9 +149,13 @@ levels(data_behav_addictions_mean_time_melt$variable) <- c("BAs_shopping" = "Sho
                                                            "BAs_legal_drug" = "Legal Substance(s)", "BAs_illegal_drug" = "Illegal Substance(s)", "BAs_gambling" = "Gambling", 
                                                            "BAs_gaming" = "Gaming", "BAs_overeating" = "Overeating")
 # prep distress/CovidStress data
-data_distress15 <- data_shoppingCovid19[, c("CISS", "stress_outbreak", "time_days")]
-data_distress15$CISS_15 <- (data_distress15$CISS - min(data_distress15$CISS)) / max(data_distress15$CISS) * 5 +2
-data_distress15$stress_outbreak_15 <- (data_distress15$stress_outbreak - min(data_distress15$stress_outbreak)) / max(data_distress15$stress_outbreak) * 5 +2
+data_distress <- data_shoppingCovid19[, c("PSS", "stress_outbreak", "time_days")]
+# scaling for comparability
+data_distress$PSS_cent <- scale(data_distress$PSS, center=T, scale=T)
+data_distress$stress_outbreak_cent <- scale(data_distress$stress_outbreak, center=T, scale=T)
+
+# data_distress15$PSS <- (data_distress15$PSS - min(data_distress15$PSS)) / max(data_distress15$PSS) * 5 +2
+# data_distress15$stress_outbreak_15 <- (data_distress15$stress_outbreak - min(data_distress15$stress_outbreak)) / max(data_distress15$stress_outbreak) * 5 +2
 
 ## Covid19 events in US economy
 # start: 13.03.2020   President Trump issues the Proclamation on Declaring a National Emergency Concerning the Novel Coronavirus Disease (COVID-19) Outbreak, declaring a national state of emergency.[
@@ -187,7 +191,7 @@ ggplot() +
               size = 0.7, 
               span=span, se=F)+
   scale_color_manual(values=BA_colors8) +
-  labs(x="Time (days since the outbreak)\n between 26/03/2020 and 02/10/2020",
+  labs(x="",
        y="Frequency",
        color="", group = "",
        title="How often did you engage in [name of the activity] in the past \n7 days?") +
@@ -196,27 +200,28 @@ ggplot() +
   scale_y_continuous(breaks = seq(0, 3.5, by = 0.5)) +
   theme_pubr(legend="top") 
 
-# plot distress
+# plot distress 
 plot_distress <- 
 ggplot() +
-  geom_smooth(method= "loess", data=data_distress15, 
-              aes(y=CISS_15, x=time_days, fill="DISTRESS"), 
-              linetype = "dashed", color="darkblue", 
+  geom_smooth(method= "loess", data=data_distress, 
+              aes(y=PSS_cent, x=time_days, fill="Distress (PSS)"), 
+              linetype = "solid", color="darkred", 
               span = span) +
-  geom_smooth(method = "loess", data=data_distress15, 
-              aes(y=stress_outbreak_15, x=time_days, fill="COVID19 STRESS"), 
-              linetype="dashed", color="darkblue", 
+  geom_smooth(method = "loess", data=data_distress, 
+              aes(y=stress_outbreak_cent, x=time_days, fill="Covid-19 stress (single item)"), 
+              linetype="dashed", color="black", 
               span = span) +
   
   # scale_fill_manual(values=BA_colors8) +
   scale_color_manual(values=BA_colors8) +
   labs(x="",
-       y="",
+       y="Z-scores",
        color="", group = "",
        title="Distress during the outbreak") +
-  scale_fill_manual(name = "", values = c(BA_colors8, "DISTRESS" = "grey15", "COVID19 STRESS" = "purple")) +
+  scale_fill_manual(name = "", values = c(BA_colors8, "Distress (PSS)" = "grey80", "Covid-19 stress (single item)" = "darkred")) +
   scale_x_continuous(breaks = seq(0, 200, by = 20)) +
   theme_pubr(legend="top")
+
 
 # plot Covid19 cases
 plot_cases <- 
@@ -224,7 +229,8 @@ plot_cases <-
     # add Covid cases
   geom_smooth(data = data_covidCases, aes(y = cases, x = days_passed), 
               color = "black", method = "loess", se=F) +
-  labs(title="New Covid-19 cases") +
+  labs(title="New Covid-19 cases", 
+       x= "Time (days since the outbreak)\n between 26/03/2020 and 02/10/2020") +
   scale_x_continuous(breaks = seq(0, 200, by = 20)) +
   scale_y_continuous(n.breaks = 8) +
   # add Covid19 events
@@ -267,6 +273,61 @@ ggsave(plot=last_plot(), filename="Figures/BAs/BAs_all_perTime_facets.png",
 
 
 ## PLOT CORR BETWEEN DISTRESS/COVID19 STRESS AND BEHAV.ADDICTIONS
+# grep data from statistics file
+source("Code/BAs/statistics_BAs.R")
+# prep for plotting
+data_corr_stressType_melt <- melt(data_corr_stressType, id=c("stress_type", "time_days"), 
+                                  value.name="value", na.rm=T)
+# apply Fisher's Z tranformation
+data_corr_stressType_melt$value <- fisherz(data_corr_stressType_melt$value)
+
+# prep variables for plotting
+levels(data_corr_stressType_melt$variable) <- c("BAs_shopping" = "Shopping", "BAs_alcohol" = "Alcohol", "BAs_smoking" = "Smoking",
+                                                           "BAs_legal_drug" = "Legal Substance(s)", "BAs_illegal_drug" = "Illegal Substance(s)", "BAs_gambling" = "Gambling", 
+                                                           "BAs_gaming" = "Gaming", "BAs_overeating" = "Overeating")
+
+# plot correlations with PSS by BA type
+
+ggplot() + 
+  geom_smooth(data=data_corr_stressType_melt[data_corr_stressType_melt$stress_type == "2", ], # "1" = "stress_outbreak", "2" = "PSS"
+              aes(x=time_days, y=value, 
+                  color=variable)) +
+  labs(x="Time (days passed since the outbreak)\n", 
+       y="Correlation coefficient\n between distress and frequency of behaviour\n averaged for each timepoint", 
+       color = "", 
+       title = "Distress (PSS)") +
+  scale_color_manual(values=BA_colors8) +
+  facet_wrap("variable") +
+  theme_pubr()
+
+# save plot
+ggsave(plot=last_plot(), filename="Figures/BAs/corr_byBA_facets_pss.png", 
+       width=18, height=16, units="cm") 
+
+
+
+# plot correlations with PSS by BA type
+
+ggplot() + 
+  geom_smooth(data=data_corr_stressType_melt[data_corr_stressType_melt$stress_type == "1", ], # "1" = "stress_outbreak", "2" = "PSS"
+              aes(x=time_days, y=value, 
+                  color=variable)) +
+  labs(x="Time (days passed since the outbreak)\n", 
+       y="Correlation coefficient\n between Covid-19 stress and frequency of behaviour\n averaged for each timepoint", 
+       color = "", 
+       title = "Covid-19-related stress (1 item)") +
+  scale_color_manual(values=BA_colors8) +
+  facet_wrap("variable") +
+  theme_pubr()
+
+# save plot
+ggsave(plot=last_plot(), filename="Figures/BAs/corr_byBA_facets_covid19.png", 
+       width=18, height=16, units="cm") 
+
+
+
+
+
 # EVA
 # calculate Spearman correlation at each point of time between distress (PSS scale) and each behavioral addiction (variables starting with BAs_  but leave out the BAs_other) 
 #make a nice new data.frame with all relevant variables for a great overview 
