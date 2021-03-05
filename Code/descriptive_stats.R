@@ -158,6 +158,15 @@ pss_items <- data_shoppingCovid19[, c("pss_1", "pss_2", "pss_3", "pss_4r", "pss_
                                       "pss_11", "pss_12", "pss_13r", "pss_14")]
 psych::omega(pss_items, nfactors = 1)
 
+# COSS - online compulsive buying
+coss_items <- data_shoppingCovid19[, grepl("coss_", colnames(data_shoppingCovid19))]
+psych::omega(coss_items, nfactors = 1)
+
+# BERGEN - offline shopping
+bergen_items <- data_shoppingCovid19[, grepl("bergen_", colnames(data_shoppingCovid19))]
+psych::omega(bergen_items, nfactors = 1)
+
+
 #######################################################
 ## save final data with scales and factor levels adjusted
 #######################################################

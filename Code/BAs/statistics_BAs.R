@@ -7,7 +7,7 @@
 # checkpoint("2020-04-15")
 
 ## set up packages
-packages <- c("tidyverse", "reshape2", 
+packages <- c("tidyverse", "reshape2", "ddplyr",
               "sjstats")
 # write a function to load (and/or install) packages with feedback of success
 load_my_packages <- function(package){
@@ -41,7 +41,7 @@ data_shoppingCovid19[BAs] <- sapply(data_shoppingCovid19[BAs], as.numeric)
 
 # calculate correlation
 data_corr_stressOutbr_BAs <- 
-  join_all(list(
+  plyr::join_all(list(
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_shopping" = cor(as.numeric(BAs_shopping), stress_outbreak,
@@ -80,7 +80,7 @@ data_corr_stressOutbr_BAs <-
 
 # correlation with PSS
 data_corr_PSS_BAs <- 
-  join_all(list(
+  plyr::join_all(list(
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_shopping" = cor(as.numeric(BAs_shopping), PSS,
