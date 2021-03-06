@@ -126,8 +126,6 @@ data_corr_stressType$stress_type <- recode(data_corr_stressType$stress_type, "1"
 # test H1 (The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
 corr.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_shopping, method="spearman")
 corr.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_shopping, method="spearman")
-
-
             
 # test the linearity among correlation coefficients calculated at each point of time
 # (Eva)
@@ -232,7 +230,7 @@ names(H1BAsPSS)[names(H1BAsPSS) == "aovereating.CORovereating"] <- "CORovereatin
 
 
 #calculate correlation between BAs and stress_outbreak
-#shoppingand stress_outbreak
+#shopping and stress_outbreak
 require(plyr)
 funcshoppingb <- function(plotcorrdisandBA)
 {
@@ -402,3 +400,7 @@ cor.test(dataframeH3$BAs_legal_drug, dataframeH3$stress_outbreak, method="spearm
 cor.test(dataframeH3$BAs_illegal_drug, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
 cor.test(dataframeH3$BAs_gambling, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
 cor.test(dataframeH3$BAs_overeating, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
+
+
+
+#Merge 4 Datapoint into one new Varible

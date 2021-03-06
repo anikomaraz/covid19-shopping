@@ -181,7 +181,7 @@ event_schools_day <-  137 # 28.07.2020
 event_schools_name <- "CDS calls for reopening\n  schools"
 
 
-
+library(ggplot2)
 # plot excessive behaviours
 plot_BAs <- 
 ggplot() +
@@ -189,7 +189,7 @@ ggplot() +
               aes(x=time_days, y=value,
                   group = variable, color = variable),
               size = 0.7, 
-              span=span, se=F)+
+              span = span, se=F)+
   scale_color_manual(values=BA_colors8) +
   labs(x="",
        y="Frequency",
@@ -506,6 +506,8 @@ names(MeanSDBAovereating)[names(MeanSDBAovereating) == "MeanSDBA.MeanCORovereati
 names(MeanSDBAovereating)[names(MeanSDBAovereating) == "c..MeanCORovereating.."] <- "Name"
 
 #merge all subframes into a dataframe 
+library(dplyr)
+library(tidyjson)
 MeanSDBAfinish <- bind_rows(MeanSDBAalcohol, MeanSDBAshopping, MeanSDBAsmoking, MeanSDBAlegaldrug, MeanSDBAillegaldrug, MeanSDBAgambling, MeanSDBAgaming, MeanSDBAovereating)
 colnames(MeanSDBAfinish) #tidying the colnames
 names(MeanSDBAfinish)[names(MeanSDBAfinish) == "MeanSDBA.time_batch"] <- "time_batch"
@@ -784,7 +786,21 @@ figstressgamblinggaming
 
 
 # IGNORED PLOTS
+plot <- MeanSDBAstressfinish 
+colnames(plot) #tidying the colnames
+names(plot)[names(plot) == "Name"] <- "variable"
 
+ggplot() + 
+  geom_smooth(data=plot, 
+              aes(x=time_batch, y=Mean, 
+                  color=variable)) +
+  labs(x="Time (days passed since the outbreak)\n", 
+       y="Correlation coefficient\n between distress and frequency of behaviour\n averaged for each timepoint", 
+       color = "", 
+       title = "Covid-19-related stress (1 item)") +
+  scale_color_manual(values=BA_colors8) +
+  facet_wrap("variable") +
+  theme_pubr()
 
 #######################################################
 ## BA = "too much" over time
