@@ -786,6 +786,7 @@ figstressgamblinggaming
 
 
 # IGNORED PLOTS
+#Plot with Eva's correlations 
 plot <- MeanSDBAstressfinish 
 colnames(plot) #tidying the colnames
 names(plot)[names(plot) == "Name"] <- "variable"
