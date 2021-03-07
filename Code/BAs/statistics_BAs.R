@@ -401,6 +401,52 @@ cor.test(dataframeH3$BAs_illegal_drug, dataframeH3$stress_outbreak, method="spea
 cor.test(dataframeH3$BAs_gambling, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
 cor.test(dataframeH3$BAs_overeating, dataframeH3$stress_outbreak, method="spearman", na.rm = T)
 
+#Merge 4 Ddatapoints into one new varible
+#create new dataframe: all BAs, PSS, time batch and stress outbreak 
+plotcorrdisandBA<- data.frame(as.numeric(data_shoppingCovid19$BAs_shopping), as.numeric(data_shoppingCovid19$BAs_alcohol), 
+                              as.numeric(data_shoppingCovid19$BAs_smoking), as.numeric(data_shoppingCovid19$BAs_legal_drug),
+                              as.numeric(data_shoppingCovid19$BAs_illegal_drug), as.numeric(data_shoppingCovid19$BAs_gambling),
+                              as.numeric(data_shoppingCovid19$BAs_gaming), as.numeric(data_shoppingCovid19$BAs_overeating), 
+                              as.numeric(data_shoppingCovid19$time_batch), data_shoppingCovid19$PSS, data_shoppingCovid19$stress_outbreak)
 
+#rename colums
+colnames(plotcorrdisandBA)
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_shopping."] <- "BAs_shopping"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_alcohol."] <- "BAs_alcohol"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_smoking."] <- "BAs_smoking"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_legal_drug."] <- "BAs_legal_drug"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_illegal_drug."] <- "BAs_illegal_drug"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_gambling."] <- "BAs_gambling"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_gaming."] <- "BAs_gaming"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_overeating."] <- "BAs_overeating"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.time_batch."] <- "time_batch"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.PSS"] <- "PSS"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.stress_outbreak"] <- "stress_outbreak"
+head(plotcorrdisandBA)
 
-#Merge 4 Datapoint into one new Varible
+#average for every datapoint
+library(plyr)
+averageddatapoints <- ddply(plotcorrdisandBA, .(time_batch), summarize,  
+                            Shopping=mean(BAs_shopping), Alcohol=mean(BAs_alcohol),
+                            Smoking=mean(BAs_smoking), Legaldrugs=mean(BAs_legal_drug),
+                            Illegaldrugs=mean(BAs_illegal_drug), Gaming=mean(BAs_gaming),
+                            Gambling=mean(BAs_gambling), Overeating=mean(BAs_overeating),
+                            PSS=mean(PSS), stress_outbreak=mean(stress_outbreak))
+
+library(groupdata2)
+library(knitr) 
+averageddatapoints = averageddatapoints %>%
+  
+  # Group data
+  group(n = 4, method = 'greedy') %>%
+  
+  # Find means of each group
+  dplyr::summarise(Shopping = mean(Shopping), Alkohol = mean(Alcohol), 
+                   Smoking = mean(Smoking), Legaldrugs = mean(Legaldrugs), 
+                   Illegaldrugs = mean(Illegaldrugs), Gaming = mean(Gaming),
+                   Gambling = mean(Gambling), Overeating = mean(Overeating),
+                   PSS = mean(PSS), stress_outbreak = mean(stress_outbreak), rm.na = T)
+
+# Show new data
+averageddatapoints %>% kable() 
+
