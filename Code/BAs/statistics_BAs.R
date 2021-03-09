@@ -41,13 +41,18 @@ data_shoppingCovid19$timeMerged <- group_var(data_shoppingCovid19$time_batch, si
 
 # calculate mean per merged time group
 # but first grep pss items
-pss_items <- names(data_shoppingCovid19[, grep("pss_\\d+$", colnames(data_shoppingCovid19))])
+# pss_items <- names(data_shoppingCovid19[, grep("pss_\\d+$", colnames(data_shoppingCovid19))])
+# # and now calculate the aggregated means
+# data_shoppingCovid19_timeAveraged <- aggregate(. ~ data_shoppingCovid19$timeMerged, 
+#                                                data_shoppingCovid19[, c(pss_items, BAs, 
+#                                                                         "stress_outbreak")],
+#                                                function(x) mean(x, na.rm=TRUE), na.action = na.pass)
 
-# and now calculate the aggregated means
-data_shoppingCovid19_timeAveraged <- aggregate(. ~ data_shoppingCovid19$timeMerged, 
-                                               data_shoppingCovid19[, c(pss_items, BAs, 
-                                                                        "stress_outbreak")],
-                                               function(x) mean(x, na.rm=TRUE), na.action = na.pass)
+
+
+
+
+
 
 #######################################################
 ## H2: Self-reported addiction-related behavioral problems are related to general distress
