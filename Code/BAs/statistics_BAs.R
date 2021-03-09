@@ -455,10 +455,7 @@ names(averageddatapoints)[names(averageddatapoints) == ".groups"] <- "time_merge
 
 library(lavaan)
 #calculating the hypothesis via SEM
+write.csv(averageddatapoints,"averageddatapoints.csv", row.names = FALSE)
 
-#2: Self-reported addiction-related behavioral problems are related to general distress
-#3: Self-reported addiction-related behavioral problems are related to Covid19-related distress
-#prep data
 
-#model specification
 
