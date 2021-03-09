@@ -450,3 +450,15 @@ averageddatapoints = averageddatapoints %>%
 # Show new data
 averageddatapoints %>% kable() 
 
+colnames(averageddatapoints)
+names(averageddatapoints)[names(averageddatapoints) == ".groups"] <- "time_merged"
+
+library(lavaan)
+#calculating the hypothesis via SEM
+
+#2: Self-reported addiction-related behavioral problems are related to general distress
+#3: Self-reported addiction-related behavioral problems are related to Covid19-related distress
+#prep data
+
+#model specification
+
