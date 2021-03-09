@@ -407,7 +407,12 @@ plotcorrdisandBA<- data.frame(as.numeric(data_shoppingCovid19$BAs_shopping), as.
                               as.numeric(data_shoppingCovid19$BAs_smoking), as.numeric(data_shoppingCovid19$BAs_legal_drug),
                               as.numeric(data_shoppingCovid19$BAs_illegal_drug), as.numeric(data_shoppingCovid19$BAs_gambling),
                               as.numeric(data_shoppingCovid19$BAs_gaming), as.numeric(data_shoppingCovid19$BAs_overeating), 
-                              as.numeric(data_shoppingCovid19$time_batch), data_shoppingCovid19$PSS, data_shoppingCovid19$stress_outbreak)
+                              as.numeric(data_shoppingCovid19$time_batch), data_shoppingCovid19$PSS, data_shoppingCovid19$pss_1, 
+                              data_shoppingCovid19$pss_2, data_shoppingCovid19$pss_3, data_shoppingCovid19$pss_4, 
+                              data_shoppingCovid19$pss_5, data_shoppingCovid19$pss_6, data_shoppingCovid19$pss_7, 
+                              data_shoppingCovid19$pss_8, data_shoppingCovid19$pss_9, data_shoppingCovid19$pss_10, 
+                              data_shoppingCovid19$pss_11, data_shoppingCovid19$pss_12, data_shoppingCovid19$pss_13, 
+                              data_shoppingCovid19$pss_14 ,data_shoppingCovid19$stress_outbreak)
 
 #rename colums
 colnames(plotcorrdisandBA)
@@ -421,6 +426,20 @@ names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovi
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.BAs_overeating."] <- "BAs_overeating"
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "as.numeric.data_shoppingCovid19.time_batch."] <- "time_batch"
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.PSS"] <- "PSS"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_1"] <- "pss_1"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_2"] <- "pss_2"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_3"] <- "pss_3"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_4"] <- "pss_4"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_5"] <- "pss_5"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_6"] <- "pss_6"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_7"] <- "pss_7"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_8"] <- "pss_8"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_9"] <- "pss_9"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_10"] <- "pss_10"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_11"] <- "pss_11"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_12"] <- "pss_12"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_13"] <- "pss_13"
+names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.pss_14"] <- "pss_14"
 names(plotcorrdisandBA)[names(plotcorrdisandBA) == "data_shoppingCovid19.stress_outbreak"] <- "stress_outbreak"
 head(plotcorrdisandBA)
 
@@ -431,7 +450,12 @@ averageddatapoints <- ddply(plotcorrdisandBA, .(time_batch), summarize,
                             Smoking=mean(BAs_smoking), Legaldrugs=mean(BAs_legal_drug),
                             Illegaldrugs=mean(BAs_illegal_drug), Gaming=mean(BAs_gaming),
                             Gambling=mean(BAs_gambling), Overeating=mean(BAs_overeating),
-                            PSS=mean(PSS), stress_outbreak=mean(stress_outbreak))
+                            PSS=mean(PSS), pss_1=mean(pss_1), pss_2=mean(pss_2), 
+                            pss_3=mean(pss_3), pss_4=mean(pss_4), pss_5=mean(pss_5), 
+                            pss_6=mean(pss_5), pss_6=mean(pss_6), pss_7=mean(pss_7), 
+                            pss_8=mean(pss_8), pss_9=mean(pss_9), pss_10=mean(pss_10), 
+                            pss_11=mean(pss_11), pss_12=mean(pss_12),pss_13=mean(pss_13),  
+                            pss_14=mean(pss_14), stress_outbreak=mean(stress_outbreak))
 
 library(groupdata2)
 library(knitr) 
@@ -445,7 +469,12 @@ averageddatapoints = averageddatapoints %>%
                    Smoking = mean(Smoking), Legaldrugs = mean(Legaldrugs), 
                    Illegaldrugs = mean(Illegaldrugs), Gaming = mean(Gaming),
                    Gambling = mean(Gambling), Overeating = mean(Overeating),
-                   PSS = mean(PSS), stress_outbreak = mean(stress_outbreak), rm.na = T)
+                   PSS = mean(PSS),  pss_1=mean(pss_1), pss_2=mean(pss_2), 
+                   pss_3=mean(pss_3), pss_4=mean(pss_4), pss_5=mean(pss_5), 
+                   pss_6=mean(pss_5), pss_6=mean(pss_6), pss_7=mean(pss_7), 
+                   pss_8=mean(pss_8), pss_9=mean(pss_9), pss_10=mean(pss_10), 
+                   pss_11=mean(pss_11), pss_12=mean(pss_12),pss_13=mean(pss_13),  
+                   pss_14=mean(pss_14), stress_outbreak = mean(stress_outbreak), rm.na = T)
 
 # Show new data
 averageddatapoints %>% kable() 
@@ -455,6 +484,7 @@ names(averageddatapoints)[names(averageddatapoints) == ".groups"] <- "time_merge
 
 library(lavaan)
 #calculating the hypothesis via SEM
+#prep
 write.csv(averageddatapoints,"averageddatapoints.csv", row.names = FALSE)
 
 
