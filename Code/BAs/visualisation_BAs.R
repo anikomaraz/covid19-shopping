@@ -9,7 +9,7 @@
 ## set up packages
 packages <- c("tidyverse", "reshape2", "scales", "RColorBrewer", 
               # "cowplot", 
-              "ggpubr")
+              "ggpubr", "tidyjson")
 
 # write a function to load (and/or install) packages with feedback of success
 load_my_packages <- function(package){

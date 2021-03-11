@@ -48,58 +48,39 @@ data_shoppingCovid19$timeMerged <- group_var(data_shoppingCovid19$time_batch, si
 #                                                                         "stress_outbreak")],
 #                                                function(x) mean(x, na.rm=TRUE), na.action = na.pass)
 
-
 library(lavaan)
 #prep dataframe for onxy and modell specification 
-SEMdataframe <- data.frame(data_shoppingCovid19$timeMerged, data_shoppingCovid19$stress_outbreak, 
-                           data_shoppingCovid19$BAs_shopping, data_shoppingCovid19$pss_1, data_shoppingCovid19$pss_2,
-                           data_shoppingCovid19$pss_3, data_shoppingCovid19$pss_4, data_shoppingCovid19$pss_5,
-                           data_shoppingCovid19$pss_6, data_shoppingCovid19$pss_7, data_shoppingCovid19$pss_8,
-                           data_shoppingCovid19$pss_9, data_shoppingCovid19$pss_10, data_shoppingCovid19$pss_11,
-                           data_shoppingCovid19$pss_12, data_shoppingCovid19$pss_13, data_shoppingCovid19$pss_14)
-colnames(SEMdataframe)
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.BAs_shopping"] <- "BAs_shopping"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.timeMerged"] <- "timeMerged"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.stress_outbreak"] <- "stress_outbreak"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_1"] <- "pss_1"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_2"] <- "pss_2"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_3"] <- "pss_3"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_4"] <- "pss_4"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_5"] <- "pss_5"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_6"] <- "pss_6"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_7"] <- "pss_7"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_8"] <- "pss_8"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_9"] <- "pss_9"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_10"] <- "pss_10"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_11"] <- "pss_11"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_12"] <- "pss_12"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_13"] <- "pss_13"
-names(SEMdataframe)[names(SEMdataframe) == "data_shoppingCovid19.pss_14"] <- "pss_14"
-head(SEMdataframe)  
-
-write.csv(SEMdataframe,"SEMdataframe.csv", row.names = FALSE)
-
-
-
-
+data_shoppingCovid19$BAs_shopping <- as.numeric(data_shoppingCovid19$BAs_shopping)
 #model specification 
 model <- '
   # measurement model
-    PSS =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_13
+    PSS_latent =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + 
+    pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_14
+  # regressions
+    PSS_latent ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_shopping ~ PSS_latent + stress_outbreak + timeMerged
+  # correlations
+    PSS_latent ~~ stress_outbreak
+    '
+
+model_obs_only <- '
+  # measurement model
   # regressions
     PSS ~ timeMerged
     stress_outbreak ~ timeMerged
-    BAs_shopping ~ PSS + stress_outbreak
+    BAs_shopping ~ PSS + stress_outbreak + timeMerged
   # correlations
     PSS ~~ stress_outbreak
     '
+  
 #model identification ?
 #t rule: 15 <= 0.5 * 14 * 15 --> True 
 
 #model estimation 
 #H0: SEM does not fit better to our data then the saturated model
 #H1: SEM does fit worser to our data then the saturated model 
-fit <- sem(model, data=SEMdataframe)
+fit <- sem(model_obs_only, data=data_shoppingCovid19)
 summary(fit, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
 
 fitMeasures(fit, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
