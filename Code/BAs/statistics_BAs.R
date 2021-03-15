@@ -51,6 +51,16 @@ data_shoppingCovid19$timeMerged <- group_var(data_shoppingCovid19$time_batch, si
 library(lavaan)
 #prep dataframe for onxy and modell specification 
 data_shoppingCovid19$BAs_shopping <- as.numeric(data_shoppingCovid19$BAs_shopping)
+data_shoppingCovid19$BAs_shopping <- as.numeric(data_shoppingCovid19$BAs_shopping)
+data_shoppingCovid19$BAs_alcohol <- as.numeric(data_shoppingCovid19$BAs_alcohol)
+data_shoppingCovid19$BAs_smoking <- as.numeric(data_shoppingCovid19$BAs_smoking)
+data_shoppingCovid19$BAs_legal_drug <- as.numeric(data_shoppingCovid19$BAs_legal_drug)
+data_shoppingCovid19$BAs_illegal_drug <- as.numeric(data_shoppingCovid19$BAs_illegal_drug)
+data_shoppingCovid19$BAs_gaming <- as.numeric(data_shoppingCovid19$BAs_gaming)
+data_shoppingCovid19$BAs_gambling <- as.numeric(data_shoppingCovid19$BAs_gambling)
+data_shoppingCovid19$BAs_overeating <- as.numeric(data_shoppingCovid19$BAs_overeating)
+
+#shopping
 #model specification 
 model <- '
   # measurement model
@@ -81,14 +91,278 @@ model_obs_only <- '
 #H0: SEM does not fit better to our data then the saturated model
 #H1: SEM does fit worser to our data then the saturated model 
 fit <- sem(model_obs_only, data=data_shoppingCovid19)
+fit2 <- sem(model, data=data_shoppingCovid19)
 summary(fit, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+summary(fit2, standardized=TRUE) 
 
 fitMeasures(fit, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+fitMeasures(fit2, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
 
+#alcohol
+#model specification 
+modelalc <- '
+  # measurement model
+    PSS_latent =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + 
+    pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_14
+  # regressions
+    PSS_latent ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_alcohol ~ PSS_latent + stress_outbreak + timeMerged
+  # correlations
+    PSS_latent ~~ stress_outbreak
+    '
 
+model_obs_onlyalc <- '
+  # measurement model
+  # regressions
+    PSS ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_alcohol ~ PSS + stress_outbreak + timeMerged
+  # correlations
+    PSS ~~ stress_outbreak
+    '
 
+#model identification ?
+#t rule: 15 <= 0.5 * 14 * 15 --> True 
 
+#model estimation 
+#H0: SEM does not fit better to our data then the saturated model
+#H1: SEM does fit worser to our data then the saturated model 
+fitalc <- sem(model_obs_onlyalc, data=data_shoppingCovid19)
+fitalc2 <- sem(modelalc, data=data_shoppingCovid19)
+summary(fitalc, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+summary(fitalc2, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
 
+fitMeasures(fitalc, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+fitMeasures(fitalc2, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+
+#smoking
+#model specification 
+modelsmoke <- '
+  # measurement model
+    PSS_latent =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + 
+    pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_14
+  # regressions
+    PSS_latent ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_smoking ~ PSS_latent + stress_outbreak + timeMerged
+  # correlations
+    PSS_latent ~~ stress_outbreak
+    '
+
+model_obs_onlysmoke <- '
+  # measurement model
+  # regressions
+    PSS ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_smoking ~ PSS + stress_outbreak + timeMerged
+  # correlations
+    PSS ~~ stress_outbreak
+    '
+
+#model identification ?
+#t rule: 15 <= 0.5 * 14 * 15 --> True 
+
+#model estimation 
+#H0: SEM does not fit better to our data then the saturated model
+#H1: SEM does fit worser to our data then the saturated model 
+fitsmoke <- sem(model_obs_onlysmoke, data=data_shoppingCovid19)
+fitsmoke2 <- sem(modelsmoke, data=data_shoppingCovid19)
+summary(fitsmoke, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+summary(fitsmoke2, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+
+fitMeasures(fitsmoke, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+fitMeasures(fitsmoke2, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+
+#gaming
+#model specification 
+modelgaming <- '
+  # measurement model
+    PSS_latent =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + 
+    pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_14
+  # regressions
+    PSS_latent ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_gaming ~ PSS_latent + stress_outbreak + timeMerged
+  # correlations
+    PSS_latent ~~ stress_outbreak
+    '
+
+model_obs_onlygaming <- '
+  # measurement model
+  # regressions
+    PSS ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_gaming ~ PSS + stress_outbreak + timeMerged
+  # correlations
+    PSS ~~ stress_outbreak
+    '
+
+#model identification ?
+#t rule: 15 <= 0.5 * 14 * 15 --> True 
+
+#model estimation 
+#H0: SEM does not fit better to our data then the saturated model
+#H1: SEM does fit worser to our data then the saturated model 
+fitgaming <- sem(model_obs_onlygaming, data=data_shoppingCovid19)
+fitgaming2 <- sem(modelgaming, data=data_shoppingCovid19)
+summary(fitgaming, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+summary(fitgaming2, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+
+fitMeasures(fitsmoke, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+fitMeasures(fitsmoke2, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+
+#gambling
+#model specification 
+modelgambling <- '
+  # measurement model
+    PSS_latent =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + 
+    pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_14
+  # regressions
+    PSS_latent ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_gambling ~ PSS_latent + stress_outbreak + timeMerged
+  # correlations
+    PSS_latent ~~ stress_outbreak
+    '
+
+model_obs_onlygambling <- '
+  # measurement model
+  # regressions
+    PSS ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_gambling ~ PSS + stress_outbreak + timeMerged
+  # correlations
+    PSS ~~ stress_outbreak
+    '
+
+#model identification ?
+#t rule: 15 <= 0.5 * 14 * 15 --> True 
+
+#model estimation 
+#H0: SEM does not fit better to our data then the saturated model
+#H1: SEM does fit worser to our data then the saturated model 
+fitgambling <- sem(model_obs_onlygambling, data=data_shoppingCovid19)
+fitgambling2 <- sem(modelgambling, data=data_shoppingCovid19)
+summary(fitgambling, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+summary(fitgambling2, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+
+fitMeasures(fitgambling, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+fitMeasures(fitgambling2, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+
+#legaldrugs
+#model specification 
+modellegadrugs <- '
+  # measurement model
+    PSS_latent =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + 
+    pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_14
+  # regressions
+    PSS_latent ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_legal_drug ~ PSS_latent + stress_outbreak + timeMerged
+  # correlations
+    PSS_latent ~~ stress_outbreak
+    '
+
+model_obs_onlylegaldrugs <- '
+  # measurement model
+  # regressions
+    PSS ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_legal_drug ~ PSS + stress_outbreak + timeMerged
+  # correlations
+    PSS ~~ stress_outbreak
+    '
+
+#model identification ?
+#t rule: 15 <= 0.5 * 14 * 15 --> True 
+
+#model estimation 
+#H0: SEM does not fit better to our data then the saturated model
+#H1: SEM does fit worser to our data then the saturated model 
+fitlegaldrugs <- sem(model_obs_onlylegaldrugs, data=data_shoppingCovid19)
+fitlegaldrugs2 <- sem(modellegadrugs, data=data_shoppingCovid19)
+summary(fitlegaldrugs, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+summary(fitlegaldrugs2, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+
+fitMeasures(fitlegaldrugs, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+fitMeasures(fitlegaldrugs2, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+
+#illegaldrugs
+#model specification 
+modelillegadrugs <- '
+  # measurement model
+    PSS_latent =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + 
+    pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_14
+  # regressions
+    PSS_latent ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_illegal_drug ~ PSS_latent + stress_outbreak + timeMerged
+  # correlations
+    PSS_latent ~~ stress_outbreak
+    '
+
+model_obs_onlyillegaldrugs <- '
+  # measurement model
+  # regressions
+    PSS ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_illegal_drug ~ PSS + stress_outbreak + timeMerged
+  # correlations
+    PSS ~~ stress_outbreak
+    '
+
+#model identification ?
+#t rule: 15 <= 0.5 * 14 * 15 --> True 
+
+#model estimation 
+#H0: SEM does not fit better to our data then the saturated model
+#H1: SEM does fit worser to our data then the saturated model 
+fitillegaldrugs <- sem(model_obs_onlyillegaldrugs, data=data_shoppingCovid19)
+fitillegaldrugs2 <- sem(modelillegadrugs, data=data_shoppingCovid19)
+summary(fitillegaldrugs, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+summary(fitillegaldrugs2, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+
+fitMeasures(fitillegaldrugs, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+fitMeasures(fitillegaldrugs2, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+
+#overeating 
+#model specification 
+modelovereating <- '
+  # measurement model
+    PSS_latent =~ pss_1 + pss_2 + pss_3 + pss_4 + pss_5 + pss_7 + pss_8 + 
+    pss_9 + pss_10 + pss_11 + pss_12 + pss_13 + pss_14
+  # regressions
+    PSS_latent ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_overeating ~ PSS_latent + stress_outbreak + timeMerged
+  # correlations
+    PSS_latent ~~ stress_outbreak
+    '
+
+model_obs_onlyovereating <- '
+  # measurement model
+  # regressions
+    PSS ~ timeMerged
+    stress_outbreak ~ timeMerged
+    BAs_overeating ~ PSS + stress_outbreak + timeMerged
+  # correlations
+    PSS ~~ stress_outbreak
+    '
+
+#model identification ?
+#t rule: 15 <= 0.5 * 14 * 15 --> True 
+
+#model estimation 
+#H0: SEM does not fit better to our data then the saturated model
+#H1: SEM does fit worser to our data then the saturated model 
+fitovereating <- sem(model_obs_onlyovereating, data=data_shoppingCovid19)
+fitillegalovereating2 <- sem(modelovereating, data=data_shoppingCovid19)
+summary(fitovereating, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+summary(fitillegalovereating2, standardized=TRUE) #H0 is declined but we have a big sample so now have a look at the fit measures
+
+fitMeasures(fitovereating, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
+fitMeasures(fitillegalovereating2, c("cfi","rmsea","rmsea.ci.lower", "rmsea.ci.upper")) # we do not have a good fit here 
 
 
 #######################################################
