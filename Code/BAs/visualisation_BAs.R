@@ -289,7 +289,7 @@ levels(data_corr_stressType_melt$variable) <- c("BAs_shopping" = "Shopping", "BA
 # plot correlations with PSS by BA type
 
 ggplot() + 
-  geom_smooth(data=data_corr_stressType_melt[data_corr_stressType_melt$stress_type == "2", ], # "1" = "stress_outbreak", "2" = "PSS"
+  geom_smooth(data=data_corr_stressType_melt[data_corr_stressType_melt$stress_type == "PSS", ], # "1" = "stress_outbreak", "2" = "PSS"
               aes(x=time_days, y=value, 
                   color=variable)) +
   labs(x="Time (days passed since the outbreak)\n", 
@@ -297,12 +297,11 @@ ggplot() +
        color = "", 
        title = "Distress (PSS)") +
   scale_color_manual(values=BA_colors8) +
-  facet_wrap("variable") +
+  facet_wrap("variable", nrow=4) +
   theme_pubr()
 
 # save plot
-ggsave(plot=last_plot(), filename="Figures/BAs/corr_byBA_facets_pss.png", 
-       width=18, height=16, units="cm") 
+ggsave(plot=last_plot(), filename="Figures/BAs/corr_byBA_facets_pss.png") 
 
 
 
