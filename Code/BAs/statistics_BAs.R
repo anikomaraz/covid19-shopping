@@ -33,41 +33,16 @@ BAs <- c("BAs_shopping", "BAs_alcohol", "BAs_smoking",
          "BAs_gaming", "BAs_overeating")
 
 
-#######################################################
-## H1: The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
-#######################################################
-# create a database, where data points are averaged for every 4 batch
-data_shoppingCovid19$timeMerged <- group_var(data_shoppingCovid19$time_batch, size = 4, right.interval = T)
 
-# calculate mean per merged time group
-# but first grep pss items
-# pss_items <- names(data_shoppingCovid19[, grep("pss_\\d+$", colnames(data_shoppingCovid19))])
-# # and now calculate the aggregated means
-# data_shoppingCovid19_timeAveraged <- aggregate(. ~ data_shoppingCovid19$timeMerged, 
-#                                                data_shoppingCovid19[, c(pss_items, BAs, 
-#                                                                         "stress_outbreak")],
-#                                                function(x) mean(x, na.rm=TRUE), na.action = na.pass)
-
-# prep data for corr. analysis
-data_corr <- subset(data_shoppingCovid19, select = c("time_batch", BAs))
-data_corr <- sapply(data_corr, as.numeric)
-
-# calculate correlation for each BA
-cor.test(~ time_batch + BAs_shopping, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_alcohol, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_smoking, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_legal_drug, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_illegal_drug, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_gambling, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_gaming, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_overeating, data=data_corr, method="kendall")
 
 #######################################################
-## H2: Self-reported addiction-related behavioral problems are related to general distress
+## Correlation between the 2 stress measures
 #######################################################
-### AND
+cor.test(data_shoppingCovid19$PSS, data_shoppingCovid19$stress_outbreak, method="kendall")
+
+
 #######################################################
-## H3: Self-reported addiction-related behavioral problems are related to Covid19-related distress
+## H1: Self-reported addiction-related behavioral problems are related to distress (general + covid19 related) 
 #######################################################
 
 # transform BA variables into numeric (from factor)
@@ -178,4 +153,36 @@ cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_
 cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_gambling, method="spearman")
 cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_gaming, method="spearman")
 cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_overeating, method="spearman")
+
+
+
+#######################################################
+## H2: The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
+#######################################################
+# create a database, where data points are averaged for every 4 batch
+data_shoppingCovid19$timeMerged <- group_var(data_shoppingCovid19$time_batch, size = 4, right.interval = T)
+
+# calculate mean per merged time group
+# but first grep pss items
+# pss_items <- names(data_shoppingCovid19[, grep("pss_\\d+$", colnames(data_shoppingCovid19))])
+# # and now calculate the aggregated means
+# data_shoppingCovid19_timeAveraged <- aggregate(. ~ data_shoppingCovid19$timeMerged, 
+#                                                data_shoppingCovid19[, c(pss_items, BAs, 
+#                                                                         "stress_outbreak")],
+#                                                function(x) mean(x, na.rm=TRUE), na.action = na.pass)
+
+# prep data for corr. analysis
+data_corr <- subset(data_shoppingCovid19, select = c("time_batch", BAs))
+data_corr <- sapply(data_corr, as.numeric)
+
+# calculate correlation for each BA
+cor.test(~ time_batch + BAs_shopping, data=data_corr, method="kendall")
+cor.test(~ time_batch + BAs_alcohol, data=data_corr, method="kendall")
+cor.test(~ time_batch + BAs_smoking, data=data_corr, method="kendall")
+cor.test(~ time_batch + BAs_legal_drug, data=data_corr, method="kendall")
+cor.test(~ time_batch + BAs_illegal_drug, data=data_corr, method="kendall")
+cor.test(~ time_batch + BAs_gambling, data=data_corr, method="kendall")
+cor.test(~ time_batch + BAs_gaming, data=data_corr, method="kendall")
+cor.test(~ time_batch + BAs_overeating, data=data_corr, method="kendall")
+
 

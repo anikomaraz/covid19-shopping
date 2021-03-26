@@ -9,7 +9,8 @@
 ## set up packages
 packages <- c("tidyverse", "reshape2", "scales", "RColorBrewer", 
               # "cowplot", 
-              "ggpubr", "tidyjson")
+              "ggpubr", "tidyjson", 
+              "Cairo")
 
 # write a function to load (and/or install) packages with feedback of success
 load_my_packages <- function(package){
@@ -301,8 +302,8 @@ ggplot() +
   theme_pubr()
 
 # save plot
-ggsave(plot=last_plot(), filename="Figures/BAs/corr_byBA_facets_pss.png") 
-
+ggsave(plot=last_plot(), filename="Figures/BAs/corr_byBA_facets_pss.png", 
+       device = CairoPNG) 
 
 
 # plot correlations with PSS by BA type
