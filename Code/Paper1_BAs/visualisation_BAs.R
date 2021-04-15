@@ -1,3 +1,6 @@
+# author: Aniko Maraz
+
+
 
 #######################################################
 ## packages and version setup
@@ -31,31 +34,30 @@ data_shoppingCovid19 <- read_rds("Data/data_shoppingCovid19_withScales_factorsAd
 dim(data_shoppingCovid19)
 table(data_shoppingCovid19$time_batch)
 
-## read Covid-19 cases data
-## downloaded from https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
-# create a new dataset (called data_covidCases) restricted to the time period of 26.03.2020 to 02.10.2020 only where countryterritoryCode == "USA", with the variables of "cases", "deaths", "popData2019" and "Cumulative_number_for..."
-# create a new time variable (called "date" where day, month and year are merged and labelled as a date variable (use lubridate package), for example as 26.03.2020)
-# create a new variable (based on date, call it "days_passed") which indicates how many days have passed since the start of the outbreak, which is officially the 13.03.2020
-# save the downloaded and the extracted dataset to the "Data" folder
-## (Eva)
 
-#creat dataset data_covidCases
+#######################################################
+## read Covid-19 cases data (Eva's code)
+#######################################################
+
+## source Covid-19 cases data
+## downloaded from https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
 library(readxl)
 library(dplyr)
 getwd()
-Covid19geograpicdistirbutionww <- read_xlsx("Data/COVID-19-geographic-disbtribution-worldwide-2020-12-14.xlsx")
-data_covidCases <- Covid19geograpicdistirbutionww %>% 
+Covid19_geo_distirbution <- read_xlsx("Data/COVID-19-geographic-disbtribution-worldwide-2020-12-14.xlsx")
+data_covidCases <- Covid19_geo_distirbution %>% 
   filter(countryterritoryCode == "USA") %>% 
   filter(dateRep > "2020-03-26") %>%
   filter(dateRep < "2020-10-03") 
 
+# check if data were imported correctly
 min(data_covidCases$dateRep)
 max(data_covidCases$dateRep)
 
 data_covidCases <- data_covidCases %>% 
  select(dateRep, countryterritoryCode, cases, deaths, popData2019, `Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)
 
-# create a new time variable: new formate of date 26.03.2020
+# create a new time variable: new format of date 26.03.2020
 library(lubridate)
 date <- strptime(as.character(data_covidCases$dateRep), "%Y-%m-%d")
 date <- format(date, "%d.%m.%Y")
@@ -64,7 +66,7 @@ data_covidCases <- data.frame(data_covidCases, date)
 data_covidCases <- data_covidCases %>% 
   select(date, countryterritoryCode, cases, deaths, popData2019, Cumulative_number_for_14_days_of_COVID.19_cases_per_100000)
 
-#create a new variable "days_passed": 
+#create a new variable "days_passed" to calculate the days into the epidemic since the official outbreak on the 13.03.2020
 outbreak <- c("13.03.2020")
 data_covidCases <- data.frame(data_covidCases, outbreak)
 days_passed <- as.Date(as.character(data_covidCases$date), format="%d.%m.%Y")-
@@ -79,16 +81,13 @@ data_covidCases <- data.frame(data_covidCases, days_passed)
 # check dataframe
 ggplot(data_covidCases, aes(y=cases, x=days_passed)) + geom_line()
 
-#save data_covidCases
+# save data_covidCases
 write.csv(data_covidCases, file ="Data/data_covidCases.csv")
 
 #######################################################
 ## settings for plots 
 #######################################################
 BA_colors8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-# ,  "#FF9966"
-# , "#999999"
-
 span = 0.2
 
 #######################################################
@@ -121,12 +120,12 @@ ggplot(data_behav_addictions_gather, aes(x=BA, fill=value)) +
   scale_fill_brewer(type="seq", palette="Oranges", na.value="grey80") +
   coord_flip() +
   labs(title="How often do you engage in the following behaviours?", y="Proportion", x="", fill="") +
-  scale_y_continuous(n.breaks = 10) +
+  scale_y_continuous(n.breaks = 10)  +
   theme(legend.position="top") + theme_pubr()
 
 
 # save plot
-ggsave(plot=last_plot(), filename="Figures/BAs/BAs.png", 
+ggsave(plot=last_plot(), filename="Figures/BAs/BAs.png",
        units="cm", width=20) 
 
 
