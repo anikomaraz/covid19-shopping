@@ -36,12 +36,10 @@ raw_shoppingCovid19 <- mutate(raw_shoppingCovid19,
                               time_batch = round((as.numeric(as.POSIXct(strptime(created, format="%Y-%m-%d")))
                                                   - 1585177200) / (24*60*60) /3) +1)
 raw_shoppingCovid19$time_batch <- as.factor(raw_shoppingCovid19$time_batch)
-# data_shoppingCovid19_online$time_batch <- as.factor(data_shoppingCovid19_online$time_batch)
 table(raw_shoppingCovid19$time_batch)
 
 # calculate days since the Trump administration declared a national emergency on March 13
 # the first data was collected on March 26
-
 raw_shoppingCovid19$time_batch <- as.integer(raw_shoppingCovid19$time_batch)
 raw_shoppingCovid19$time_days <- raw_shoppingCovid19$time_batch * 3 + 11
 table(raw_shoppingCovid19$time_days)                                                                                   
@@ -66,13 +64,14 @@ raw_shoppingCovid19 <- mutate(raw_shoppingCovid19,
                               time_fill_out = strptime(ended, format="%Y-%m-%d %H:%M:%S") - strptime(created, format="%Y-%m-%d %H:%M:%S"))
 
 which(raw_shoppingCovid19$time_fill_out > 100 )
+
 # plot fill out time
 ggplot(subset(raw_shoppingCovid19, time_fill_out < 60), aes(time_fill_out)) +
   geom_histogram(binwidth = 0.3) +
-  # geom_histogram(binwidth = 0.1) +
   labs(title="Time needed to fill out survey (minutes)") +
   theme_bw()
 
+# check distribution of data "on the go"
 median(raw_shoppingCovid19$time_fill_out, na.rm=T)
 mean(raw_shoppingCovid19$time_fill_out, na.rm=T)
 sd(raw_shoppingCovid19$time_fill_out, na.rm=T)

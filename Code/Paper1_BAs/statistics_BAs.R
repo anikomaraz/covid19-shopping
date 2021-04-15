@@ -7,7 +7,7 @@
 # checkpoint("2020-04-15")
 
 ## set up packages
-packages <- c("tidyverse", "reshape2", "plyr",
+packages <- c("plyr", "tidyverse", "reshape2", 
               "sjstats", "sjmisc", "psych")
 # write a function to load (and/or install) packages with feedback of success
 load_my_packages <- function(package){
@@ -31,8 +31,6 @@ dim(data_shoppingCovid19)
 BAs <- c("BAs_shopping", "BAs_alcohol", "BAs_smoking",
          "BAs_legal_drug", "BAs_illegal_drug", "BAs_gambling", 
          "BAs_gaming", "BAs_overeating")
-
-
 
 
 #######################################################
@@ -161,15 +159,6 @@ cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_
 #######################################################
 # create a database, where data points are averaged for every 4 batch
 data_shoppingCovid19$timeMerged <- group_var(data_shoppingCovid19$time_batch, size = 4, right.interval = T)
-
-# calculate mean per merged time group
-# but first grep pss items
-# pss_items <- names(data_shoppingCovid19[, grep("pss_\\d+$", colnames(data_shoppingCovid19))])
-# # and now calculate the aggregated means
-# data_shoppingCovid19_timeAveraged <- aggregate(. ~ data_shoppingCovid19$timeMerged, 
-#                                                data_shoppingCovid19[, c(pss_items, BAs, 
-#                                                                         "stress_outbreak")],
-#                                                function(x) mean(x, na.rm=TRUE), na.action = na.pass)
 
 # prep data for corr. analysis
 data_corr <- subset(data_shoppingCovid19, select = c("time_batch", BAs))
