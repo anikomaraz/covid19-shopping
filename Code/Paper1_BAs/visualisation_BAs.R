@@ -305,7 +305,8 @@ ggplot() +
   theme_pubr()
 
 # save plot
-ggsave(plot=last_plot(), filename="Figures/BAs/corr_byBA_facets_pss.png") 
+ggsave(plot=last_plot(), filename="Figures/BAs/corr_byBA_facets_pss.png", 
+       width=18, height=16, units="cm") 
 
 
 ## plot2 correlations with covid-19 stress (="stress_outbreak") by BA type
