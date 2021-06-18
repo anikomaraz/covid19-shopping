@@ -558,7 +558,7 @@ ggsave(plot=last_plot(), filename="Figures/Income/spend_over_time_ses_catMerged.
 
 
 #######################################################
-## compulsive buying over time
+## compulsive buying over time + SES
 #######################################################
 data_cb_over_time <- data_shoppingCovid19[, c("SES_subj", "COSS", "BERGEN", "time_days")]
 data_cb_over_time <- subset(data_cb_over_time, !is.na(SES_subj))
@@ -619,8 +619,8 @@ ggplot(subset(data_cb_over_time_melt, shop_type == "BERGEN"),
   theme_pubr()
 
 # plot covid19 cases from Paper 1
-source("Code/BAs/statistics_BAs.R")
-source("Code/BAs/visualisation_BAs.R")
+source("Code/Paper1_BAs/statistics_BAs.R")
+source("Code/Paper1_BAs/visualisation_BAs.R")
 
 # this is the plot for events and case numbers during the epidemic / data collection period
 plot_cases
@@ -637,4 +637,96 @@ ggarrange(cb_over_time_online, cb_over_time_offline,
 # save plot
 ggsave(plot=last_plot(), filename="Figures/Income/cb_over_time_combi.png", 
        width=17, height=33, units = "cm")
+
+
+
+#######################################################
+## compulsive buying over time (+ income)  # create same plot but with income groups
+#######################################################
+
+data_cb_over_time_income <- data_shoppingCovid19[, c("income_now", "COSS", "BERGEN", "time_days")]
+
+data_cb_over_time_income$income_3cat <- recode_factor(data_shoppingCovid19$income_now, 
+                                                  "under 15k" = "low", 
+                                                  "15-25k" = "low",
+                                                  "25-35k" = "low",
+                                                  "35-50k" = "low", 
+                                                  "50-75k" = "medium", 
+                                                  "75-100k" = "high", 
+                                                  "above 100k" = "high")
+
+data_cb_over_time_income <- data_cb_over_time_income[data_cb_over_time_income$income_3cat != "Does not want to tell", ]
+data_cb_over_time_income$income_3cat <- factor(data_cb_over_time_income$income_3cat)
+
+data_cb_over_time_income_melt <- melt(data_cb_over_time_income, id=c("income_3cat", "time_days", "income_now"), variable="shop_type")
+
+# set span for plotting
+span = 0.4
+
+# plot online shopping
+cb_over_time_online_income <- 
+  ggplot(subset(data_cb_over_time_income_melt, shop_type == "COSS"), aes(x=time_days, y=value)) + 
+  geom_smooth(se=T, aes(fill="Total (income)"), 
+              linetype="dashed", 
+              color="black", 
+              span = span) + 
+  geom_smooth(se=T, aes(color=income_3cat), 
+              size=1.5, alpha=0.2, 
+              span = span) +
+  scale_x_continuous(breaks = seq(0, max(data_cb_over_time_income_melt$time_days), by=20)) +
+  labs(x="", y="Compulsive Online Shopping Scale \nscores", 
+       color="", group="", fill="", 
+       title= "Online shopping") +
+  scale_fill_manual(name = "", values = c(SES_colors_3cat, "black")) +
+  scale_color_manual(values=SES_colors_3cat) +
+  scale_y_continuous(breaks = seq(20, 120, by=20)) +
+  # scale_x_continuous(breaks = seq(10, 220, by=20)) +
+  theme_pubr() 
+
+cb_over_time_online_income
+
+# plot offline shopping
+cb_over_time_offline_income <- 
+  ggplot(subset(data_cb_over_time_income_melt, shop_type == "BERGEN"), 
+         aes(x=time_days, y=value)) + 
+  geom_smooth(se=T, aes(fill="Total (income)"), 
+              linetype="dashed", 
+              color="black", 
+              span = span) + 
+  geom_smooth(se=T, aes(color=income_3cat), 
+              size=1.5, alpha=0.2, 
+              span= span) +
+  scale_fill_manual(name = "", values = c(SES_colors_3cat, "Total (income)" = "black")) +
+  labs(x="", y="Bergen Shopping Scale scores", 
+       color="", fill="", 
+       title = "Offline shopping") +
+  scale_color_manual(values=SES_colors_3cat) +
+  scale_y_continuous(breaks = seq(20, 120, by=20)) +
+  scale_x_continuous(breaks = seq(0, max(data_cb_over_time_income_melt$time_days), by=20)) +
+  theme_pubr()
+
+# compbine plot
+ggarrange(cb_over_time_online_income, cb_over_time_offline_income, 
+          plot_distress, plot_cases,
+          nrow = 4, common.legend = F, 
+          align = "v")
+
+# save plot
+ggsave(plot=last_plot(), filename="Figures/Income/cb_over_time_combi_income.png", 
+       width=17, height=33, units = "cm")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

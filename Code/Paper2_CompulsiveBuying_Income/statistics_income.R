@@ -10,7 +10,8 @@
 ## set up packages
 packages <- c("tidyverse", "reshape2", 
               "effectsize", 
-              "mediation", "gvlma")
+              "mediation", "gvlma", 
+              "NSM3")
 
 # write a function to load (and/or install) packages with feedback of success
 load_my_packages <- function(package){
@@ -77,125 +78,205 @@ shopping_check
 
 
 #######################################################
-## prep data for H1
+## variable transformations
 #######################################################
-data_shoppingCovid19_income <- subset(data_shoppingCovid19, 
-                                             select=c("SES_subj", "income_now", "income_before", "COSS", "BERGEN", "age"))
-
-# exclude "does not want to tell" data
-data_shoppingCovid19_income <- subset(data_shoppingCovid19_income, income_now != "Does not \nwant to tell")
-data_shoppingCovid19_income <- subset(data_shoppingCovid19_income, income_before != "Does not \nwant to tell")
-data_shoppingCovid19_income$income_now <- factor(data_shoppingCovid19_income$income_now)
-data_shoppingCovid19_income$income_before <- factor(data_shoppingCovid19_income$income_before)
-
-# transform variables to numeric for the regression model
-data_shoppingCovid19_income$income_now <- as.numeric(data_shoppingCovid19_income$income_now)
-data_shoppingCovid19_income$income_before <- as.numeric(data_shoppingCovid19_income$income_before)
-
-# transform SES data and exclude missing
-data_shoppingCovid19_income <- subset(data_shoppingCovid19_income, !is.na(SES_subj))
-data_shoppingCovid19_income$SES_subj <- as.numeric(data_shoppingCovid19_income$SES_subj)
+# merge groups of various "poor" and "rich" categories to increase power
+data_shoppingCovid19$SES_3cat <- ifelse(data_shoppingCovid19$SES_subj %in% c("rich", "richer", "richest"), "RICH", 
+                                        ifelse(data_shoppingCovid19$SES_subj %in% c("poor", "poorer", "poorest"), "POOR", 
+                                               ifelse(data_shoppingCovid19$SES_subj == "average", "AVERAGE", 
+                                                      NA)))
 
 
 #######################################################
-## H1 testing: Compulsive buying is negatively associated with income and self-reported social status
+## AIM 1 Compulsive Buying increased in the first 6 months of Covid? 
 #######################################################
-# with income_now ONLINE
-summary(lm(COSS ~ income_now + age, data=data_shoppingCovid19_income))
+## association between time and shopping
+# online compulsive buying
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$COSS, method = "kendall")
+# offline compulsive buying
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BERGEN, method = "kendall")
 
-# with income_now OFFLINE
-summary(lm(BERGEN ~ income_now + age, data=data_shoppingCovid19_income))
+# online CB according to SES groups
+SES_3groups <- c("RICH", "AVERAGE", "POOR")
+for (i in SES_3groups) {
+data_ses_gr <- subset(data_shoppingCovid19, data_shoppingCovid19$SES_3cat == i)
+    r <- cor.test(data_ses_gr$time_days, data_ses_gr$COSS, method = "kendall")
+    print(r)
+  }
 
-# with SES_subj ONLINE
-summary(lm(COSS ~ SES_subj + age, data=data_shoppingCovid19_income))
+# offline CB within SES groups
+SES_3groups <- c("RICH", "AVERAGE", "POOR")
+for (i in SES_3groups) {
+  data_ses_gr <- subset(data_shoppingCovid19, data_shoppingCovid19$SES_3cat == i)
+  r <- cor.test(data_ses_gr$time_days, data_ses_gr$BERGEN, method = "kendall")
+  print(r)
+}
 
-# with SES_subj OFFLINE
-summary(lm(BERGEN ~ SES_subj + age, data=data_shoppingCovid19_income))
-kötelező
-# with SES_subj + income ONLINE
-summary(lm(COSS ~ SES_subj + income_now + age, data=data_shoppingCovid19_income))
+# online CB according to income groups
+income_3groups <- c("low", "medium", "high", "Does not want to tell")
+for (i in income_3groups) {
+  data_income_gr <- subset(data_shoppingCovid19, data_shoppingCovid19$income_3cat == i)
+  r <- cor.test(data_income_gr$time_days, data_income_gr$COSS, method = "kendall")
+  print(i)
+  print(r)
+}
 
-# with SES_subj OFFLINE
-summary(lm(BERGEN ~ SES_subj + income_now + age, data=data_shoppingCovid19_income))
-
-#######################################################
-## prep data for H2
-#######################################################
-data_shoppingCovid19_credit <- subset(data_shoppingCovid19, 
-                                             select=c("age", "COSS", "BERGEN", 
-                                                      "SES_subj", "income_now", "income_before", 
-                                                      "debt", "debt_amount", 
-                                                      "credit_card", "credit_card_amount"))
-
-# exclude "does not want to tell" data
-data_shoppingCovid19_credit <- subset(data_shoppingCovid19_credit, income_now != "Does not \nwant to tell")
-data_shoppingCovid19_credit <- subset(data_shoppingCovid19_credit, income_before != "Does not \nwant to tell")
-
-# transform VA for regression 
-data_shoppingCovid19_credit$income_now <- as.numeric(factor(data_shoppingCovid19_credit$income_now))
-data_shoppingCovid19_credit$income_before <- as.numeric(factor(data_shoppingCovid19_credit$income_before))
-data_shoppingCovid19_credit$credit_card_amount <- factor(data_shoppingCovid19_credit$credit_card_amount)
-data_shoppingCovid19_credit$debt_amount <- factor(data_shoppingCovid19_credit$debt_amount)
-data_shoppingCovid19_credit$SES_subj <- as.numeric(data_shoppingCovid19_credit$SES_subj)
-
-#######################################################
-## H2 testing: compulsive buying is associated with greater credit card use and with higher amounts of unpaid balance
-#######################################################
-# test group differences (debt vs. no debt)
-#online
-t.test(COSS ~ debt, data=data_shoppingCovid19)
-# ddply(data_shoppingCovid19, ~ debt, summarise, mean=mean(COSS, na.rm = T), sd=sd(COSS, na.rm = T), n=length(COSS))
-effectsize::cohens_d(COSS ~ debt, data = data_shoppingCovid19)
-#offline
-t.test(BERGEN ~ debt, data=data_shoppingCovid19)
-effectsize::cohens_d(BERGEN ~ debt, data = data_shoppingCovid19)
-
-# credit and shopping
-# explore group differences (credit vs. no credit) ONLINE
-t.test(data_shoppingCovid19$COSS, data_shoppingCovid19$credit_card)
-effectsize::cohens_d(COSS ~ credit_card, data = data_shoppingCovid19)
-
-# explore group differences (credit vs. no credit) ONLINE
-t.test(data_shoppingCovid19$BERGEN, data_shoppingCovid19$credit_card)
-effectsize::cohens_d(BERGEN ~ credit_card, data = data_shoppingCovid19)
-
-
-## TESTING H2 - associations
-# prep data - exclude those who did not have debt / unpaid credit card balance or did not want to tell this info
-data_shoppingCovid19_debtNoMiss <- subset(data_shoppingCovid19, data_shoppingCovid19$debt_amount != "does not want to tell")
-data_shoppingCovid19_creditNoMiss <- subset(data_shoppingCovid19, data_shoppingCovid19$credit_card_amount != "does not want to tell")
-
-# debt amount ONLINE AND OFFLINE
-cor.test(data_shoppingCovid19_debtNoMiss$COSS, as.numeric(data_shoppingCovid19_debtNoMiss$debt_amount), 
-    method = "kendall")
-cor.test(data_shoppingCovid19_debtNoMiss$BERGEN, as.numeric(data_shoppingCovid19_debtNoMiss$debt_amount), 
-    method = "kendall")
-
-# credit card amount ONLINE AND OFFLINE
-cor.test(data_shoppingCovid19_creditNoMiss$COSS, as.numeric(data_shoppingCovid19_creditNoMiss$credit_card_amount), 
-    method = "kendall")
-cor.test(data_shoppingCovid19_creditNoMiss$BERGEN, as.numeric(data_shoppingCovid19_creditNoMiss$credit_card_amount), 
-    method = "kendall")
+# offline CB within income groups
+for (i in income_3groups) {
+  data_income_gr <- subset(data_shoppingCovid19, data_shoppingCovid19$income_3cat == i)
+  r <- cor.test(data_income_gr$time_days, data_income_gr$BERGEN, method = "kendall")
+  print(i)
+  print(r)
+}
 
 #######################################################
-## H3 testing: given that compulsive buying is a psychological construct, distress is a better predictor than income or social status
+## AIM 2 the effect of the stimulus package
 #######################################################
-# GLM with max likelihood 
-# online
-summary(lm(COSS ~ PSS, data=data_shoppingCovid19))
-summary(lm(COSS ~ PSS + SES_subj, data=data_shoppingCovid19))
 
-#offline
-summary(lm(BERGEN ~ PSS, data=data_shoppingCovid19))
-summary(lm(BERGEN ~ PSS + SES_subj, data=data_shoppingCovid19))
+# create variable to code pre-stimulus package data waves as "pre", and 2-weeks post-stimulus data collection as "post", all other as missing
+data_shoppingCovid19$stimulus_package <- ifelse(data_shoppingCovid19$time_days <= 30, "pre", 
+                                                ifelse(data_shoppingCovid19$time_days > 30 & data_shoppingCovid19$time_days < 45, "post",
+                                                       NA))
+# check result
+table(data_shoppingCovid19$stimulus_package)
+table(data_shoppingCovid19$SES_subj, data_shoppingCovid19$stimulus_package)
+
+
 
 #######################################################
-#### outside of hypothesis-testing: mediation with SES / income 
+## Aim 3: Compulsive buying in response to distress during Covid
 #######################################################
+
+# SES group differences on ONLINE compulsive buying
+summary(aov(COSS ~ SES_3cat, data = data_shoppingCovid19))
+TukeyHSD(aov(COSS ~ SES_3cat, data = data_shoppingCovid19))
+
+# calculate mean and sd per group
+aggregate(data_shoppingCovid19$COSS, by = list(data_shoppingCovid19$SES_3cat), 
+          FUN = mean, na.rm = TRUE, na.action = NULL)
+aggregate(data_shoppingCovid19$COSS, by = list(data_shoppingCovid19$SES_3cat), 
+          FUN = sd, na.rm = TRUE)
+
+# SES group differences on OFFLINE compulsive buying
+summary(aov(BERGEN ~ SES_3cat, data = data_shoppingCovid19))
+TukeyHSD(aov(BERGEN ~ SES_3cat, data = data_shoppingCovid19))
+
+# calculate mean and sd per group
+aggregate(data_shoppingCovid19$BERGEN, by = list(data_shoppingCovid19$SES_3cat), 
+          FUN = mean, na.rm = TRUE, na.action = NULL)
+aggregate(data_shoppingCovid19$BERGEN, by = list(data_shoppingCovid19$SES_3cat), 
+          FUN = sd, na.rm = TRUE)
+
 # direct relationship between distress and ONLINE shopping
 cor.test(data_shoppingCovid19$PSS, data_shoppingCovid19$COSS, method = "pearson")
 # direct relationship between distress and OFFLINE shopping
 cor.test(data_shoppingCovid19$PSS, data_shoppingCovid19$BERGEN, method = "pearson")
+
+# SES and distress
+summary(lm(PSS ~ SES_3cat, data = data_shoppingCovid19))
+aggregate(data_shoppingCovid19$PSS, by = list(data_shoppingCovid19$SES_3cat), FUN = mean)
+aggregate(data_shoppingCovid19$PSS, by = list(data_shoppingCovid19$SES_3cat), FUN = sd)
+pairwise.t.test(data_shoppingCovid19$PSS, g = data_shoppingCovid19$SES_3cat, p.adjust.method = "bonferroni")
+
+# SES and income
+cor.test(as.numeric(data_shoppingCovid19$SES_subj), as.numeric(data_shoppingCovid19$income_now), method = "kendall")
+
+# age and SES
+cor.test(as.numeric(data_shoppingCovid19$SES_subj), as.numeric(data_shoppingCovid19$age), method = "kendall")
+
+# age and income
+cor.test(as.numeric(data_shoppingCovid19$income_now), as.numeric(data_shoppingCovid19$age), method = "kendall")
+
+
+# GLM with max likelihood 
+
+# make SES and income numeric
+data_shoppingCovid19$SES_subj_num <- as.numeric(data_shoppingCovid19$SES_subj)
+data_shoppingCovid19$income_now_num <- as.numeric(data_shoppingCovid19$income_now)
+
+# online
+summary(lm(COSS ~ PSS, data=data_shoppingCovid19))
+summary(lm(COSS ~ PSS + SES_subj_num + income_now_num + age, data=data_shoppingCovid19))
+
+#offline
+summary(lm(BERGEN ~ PSS, data=data_shoppingCovid19))
+summary(lm(BERGEN ~ PSS + SES_subj_num + income_now_num + age, data=data_shoppingCovid19))
+
+
+#######################################################
+## Aim 4: distress and compulsive buying in individuals with low SES / income vs. higher SES / income participants
+#######################################################
+# SES grouping
+SES_groups <- c("POOR", "AVERAGE", "RICH")
+
+# for online CB
+for (i in SES_groups) {
+  r = cor.test(~ COSS + PSS, data = data_shoppingCovid19, 
+           subset = data_shoppingCovid19$SES_3cat == i, 
+           method = "pearson", 
+           conf.level = 0.95)
+  print(i)
+  print(r)
+  } 
+
+# for offline CB
+for (i in SES_groups) {
+  r = cor.test(~ BERGEN + PSS, data = data_shoppingCovid19, 
+               subset = data_shoppingCovid19$SES_3cat == i, 
+               method = "pearson", 
+               conf.level = 0.95)
+  print(i)
+  print(r)
+} 
+
+# test differences between correlation coefficients
+# assign income groups to "low", "medium" and "high" categories
+data_shoppingCovid19$income_3cat <- recode_factor(data_shoppingCovid19$income_now, 
+                                                  "under 15k" = "low", 
+                                                  "15-25k" = "low",
+                                                  "25-35k" = "low",
+                                                  "35-50k" = "low", 
+                                                  "50-75k" = "medium", 
+                                                  "75-100k" = "high", 
+                                                  "above 100k" = "high")
+                                           
+
+# run the correlation in each group according to income
+income_groups <- c("low", "medium", "high", "Does not want to tell")
+
+# online CB
+for (i in income_groups) {
+  r = cor.test(~ COSS + PSS, data = data_shoppingCovid19, 
+         subset = data_shoppingCovid19$income_3cat == i, 
+         method = "pearson", 
+         conf.level = 0.95)
+  print(i)
+  print(r)
+}
+
+# offline CB
+for (i in income_groups) {
+  r = cor.test(~ BERGEN + PSS, data = data_shoppingCovid19, 
+               subset = data_shoppingCovid19$income_3cat == i, 
+               method = "pearson", 
+               conf.level = 0.95)
+  print(i)
+  print(r)
+}
+
+# get Ns
+# SES
+table(is.na(data_shoppingCovid19$BERGEN), data_shoppingCovid19$SES_3cat)
+table(is.na(data_shoppingCovid19$COSS), data_shoppingCovid19$SES_3cat)
+
+# income
+table(is.na(data_shoppingCovid19$BERGEN), data_shoppingCovid19$income_3cat)
+table(is.na(data_shoppingCovid19$COSS), data_shoppingCovid19$income_3cat)
+
+
+#####################################
+# additional analyses finally not included in the paper
+######################################
 
 # MEDIATION with SES
 
@@ -241,26 +322,4 @@ gvlma(fit_online) # for checking conditions of regression
 fit_mediation_online <- mediate(fit_medi, fit_online, treat="PSS", mediator="Income_num", sims = 50)
 summary(fit_mediation_online)
 
-
-#######################################################
-## 4: explore the main spending categories during the course of the outbreak. 
-#######################################################
-# see visualisation
-
-#######################################################
-## Overall regression model 
-#######################################################
-data_shoppingCovid19_regrNum <- na.omit(data_shoppingCovid19[, c("income_now", "SES_subj", "age", 
-                                                                 "credit_card", "debt", "PSS", 
-                                                                 "BERGEN", "COSS")])
-
-# transform factors to numberic (levels are ordered)
-data_shoppingCovid19_regrNum$income_num <- as.numeric(data_shoppingCovid19_regrNum$income_now)
-data_shoppingCovid19_regrNum$SES_subj_num <- as.numeric(data_shoppingCovid19_regrNum$SES_subj)
-
-# online
-summary(lm(COSS ~ income_num + SES_subj_num + credit_card + debt + age + PSS, data=data_shoppingCovid19_regrNum))
-
-# offline
-summary(lm(BERGEN ~ income_num + SES_subj_num + credit_card + debt + age + PSS, data=data_shoppingCovid19_regrNum))
 

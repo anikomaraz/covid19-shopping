@@ -81,7 +81,7 @@ sd(raw_shoppingCovid19$time_fill_out, na.rm=T)
 ## attention check
 #######################################################
 # disregard missing data on attention_check_1, because this was not an obligatory item (take it as 0)
-raw_shoppingCovid19$attention_check_1_noNA <- replace_na(raw_shoppingCovid19$attention_check_1, 5)
+raw_shoppingCovid19$attention_check_1_noNA <- replace_na(raw_shoppingCovid19$attention_check_1, value = 5)
 
 # calculate correct answers on the 4 attention check items (3 + age asked twice)
 raw_shoppingCovid19 <- mutate(raw_shoppingCovid19, 

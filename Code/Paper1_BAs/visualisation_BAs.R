@@ -164,8 +164,8 @@ data_distress$stress_outbreak_cent <- scale(data_distress$stress_outbreak, cente
 # start: 13.03.2020   President Trump issues the Proclamation on Declaring a National Emergency Concerning the Novel Coronavirus Disease (COVID-19) Outbreak, declaring a national state of emergency.[
 # 27/03 Trump’s stimulus package # President Trump signs a $2 trillion stimulus package into law 
 # The bill provides a one time payment of  a $1,200 check for individuals making up to $75,000 per year or $2,400 for couples earning less than $150,000. It also includes loans to businesses, funds unemployment insurance, bails out airlines and cargo carriers, authorizes aid to states and defers taxes, among other things
-event_stimulus_package_day <- 27 # 09.04.2020
-event_stimulus_package_name <- "Stimulus Package of $1,200"
+event_stimulus_package_day <- 30 # 09.04.2020
+event_stimulus_package_name <- "Stimulus Package of $1,200 received"
 
 # stay-at-home orders lifted # between 26 April and 13 May
 event_lockdown_lifted_day <- 44 # 26.04.2020

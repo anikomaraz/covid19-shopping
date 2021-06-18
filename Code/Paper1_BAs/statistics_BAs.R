@@ -44,33 +44,32 @@ cor.test(data_shoppingCovid19$PSS, data_shoppingCovid19$stress_outbreak, method=
 #######################################################
 ## H1: The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
 #######################################################
-# create a database, where data points are averaged for every 4 batch
-data_shoppingCovid19$timeMerged <- group_var(data_shoppingCovid19$time_batch, size = 4, right.interval = T)
+## create a database, where data points are averaged for every 4 batch
+# data_shoppingCovid19$timeMerged <- group_var(data_shoppingCovid19$time_batch, size = 4, right.interval = T)
+
+
+# test H1  (The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_shopping, method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_alcohol, method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_smoking, method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_legal_drug, method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_illegal_drug, method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_gambling, method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_gaming, method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_overeating, method="kendall")
+
+
+
+### PREP VISUALISATION OF THE ABOVE STATISTICS
 
 # prep data for corr. analysis
 data_corr <- subset(data_shoppingCovid19, select = c("time_batch", BAs))
 data_corr <- sapply(data_corr, as.numeric)
 
-# calculate correlation for each BA
-cor.test(~ time_batch + BAs_shopping, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_alcohol, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_smoking, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_legal_drug, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_illegal_drug, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_gambling, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_gaming, data=data_corr, method="kendall")
-cor.test(~ time_batch + BAs_overeating, data=data_corr, method="kendall")
-
-
-
-#######################################################
-## H2: Self-reported addiction-related behavioral problems are related to distress (general + covid19 related) 
-#######################################################
-
 # transform BA variables into numeric (from factor)
 data_shoppingCovid19[BAs] <- sapply(data_shoppingCovid19[BAs], as.numeric)
 
-# calculate correlation STRESS OUTBREAK
+# calculate correlation STRESS OUTBREAK (for plotting)
 data_corr_stressOutbr_BAs <- 
   plyr::join_all(list(
     ddply(data_shoppingCovid19, .(time_days), 
@@ -110,7 +109,7 @@ data_corr_stressOutbr_BAs <-
   , by="time_days", type="full")
 
 
-# calculate correlation PSS
+# calculate correlation PSS (for plotting)
 data_corr_PSS_BAs <- 
   plyr::join_all(list(
     ddply(data_shoppingCovid19, .(time_days), 
@@ -155,25 +154,30 @@ data_corr_stressType <- bind_rows(list(data_corr_stressOutbr_BAs, data_corr_PSS_
 data_corr_stressType$stress_type <- as.factor(data_corr_stressType$stress_type)
 data_corr_stressType$stress_type <- recode(data_corr_stressType$stress_type, "1" = "stress_outbreak", "2" = "PSS")
 
-# test H2  (The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
-cor.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_shopping, method="spearman")
-cor.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_alcohol, method="spearman")
-cor.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_smoking, method="spearman")
-cor.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_legal_drug, method="spearman")
-cor.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_illegal_drug, method="spearman")
-cor.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_gambling, method="spearman")
-cor.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_gaming, method="spearman")
-cor.test(x=data_corr_PSS_BAs$time_days, y=data_corr_PSS_BAs$BAs_overeating, method="spearman")
 
 
-# test H3 (Self-reported addiction-related behavioral problems are related to Covid19-related distress )
-cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_shopping, method="spearman")
-cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_alcohol, method="spearman")
-cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_smoking, method="spearman")
-cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_legal_drug, method="spearman")
-cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_illegal_drug, method="spearman")
-cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_gambling, method="spearman")
-cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_gaming, method="spearman")
-cor.test(x=data_corr_stressOutbr_BAs$time_days, y=data_corr_stressOutbr_BAs$BAs_overeating, method="spearman")
+#######################################################
+## H2: Self-reported addiction-related behavioral problems are related to distress (general + covid19 related) 
+#######################################################
+
+# test H2_a  (Self-reported addiction-related behavioral problems are related to distress (=PSS) )
+for (i in BAs) {
+  r <- cor.test(x=data_shoppingCovid19$PSS, y=data_shoppingCovid19[, i], method="kendall")
+  print(i)
+  print(r)
+}
+
+# test H2_b (Self-reported addiction-related behavioral problems are related to Covid19-related distress )
+for (i in BAs) {
+  r <- cor.test(x=data_shoppingCovid19$stress_outbreak, y=data_shoppingCovid19[, i], method="kendall")
+  print(i)
+  print(r)
+}
+
+
+
+
+
+
 
 
