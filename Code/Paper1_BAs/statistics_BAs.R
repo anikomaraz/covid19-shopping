@@ -109,41 +109,41 @@ data_corr_stressOutbr_BAs <-
   , by="time_days", type="full")
 
 
-# calculate correlation PSS (for plotting)
+# calculate tau correlation PSS (for plotting)
 data_corr_PSS_BAs <- 
   plyr::join_all(list(
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_shopping" = cor(as.numeric(BAs_shopping), PSS,
-                               method = "spearman")),
+                               method = "kendall")),
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_alcohol" = cor(as.numeric(BAs_alcohol), PSS,
-                              method = "spearman")),
+                              method = "kendall")),
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_smoking" = cor(as.numeric(BAs_smoking), PSS,
-                              method = "spearman")), 
+                              method = "kendall")), 
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_legal_drug" = cor(as.numeric(BAs_legal_drug), PSS,
-                                 method = "spearman")), 
+                                 method = "kendall")), 
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_illegal_drug" = cor(as.numeric(BAs_illegal_drug), PSS,
-                                   method = "spearman")), 
+                                   method = "kendall")), 
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_gambling" = cor(as.numeric(BAs_gambling), PSS,
-                               method = "spearman")), 
+                               method = "kendall")), 
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_gaming" = cor(as.numeric(BAs_gaming), PSS,
-                             method = "spearman")), 
+                             method = "kendall")), 
     ddply(data_shoppingCovid19, .(time_days), 
           summarise, 
           "BAs_overeating" = cor(as.numeric(BAs_overeating), PSS,
-                                 method = "spearman"))
+                                 method = "kendall"))
     
   )
   , by="time_days", type="full")

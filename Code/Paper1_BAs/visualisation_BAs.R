@@ -295,13 +295,14 @@ levels(data_corr_stressType_melt$variable) <- c("BAs_shopping" = "Shopping", "BA
 ggplot() + 
   geom_smooth(data=data_corr_stressType_melt[data_corr_stressType_melt$stress_type == "PSS", ], 
               aes(x=time_days, y=value, 
-                  color=variable)) +
+                  color=variable), 
+              se = T) +
   labs(x="Time (days passed since the outbreak)\n", 
-       y="Correlation coefficient\n between distress and frequency of behaviour\n averaged for each timepoint", 
+       y="Correlation (Kendall's tau)\n between distress and frequency of behaviour\n averaged for each timepoint", 
        color = "", 
        title = "Distress (PSS)") +
   scale_color_manual(values=BA_colors8) +
-  facet_wrap("variable", nrow=4) +
+  facet_wrap("variable", nrow=3) +
   theme_pubr()
 
 # save plot
