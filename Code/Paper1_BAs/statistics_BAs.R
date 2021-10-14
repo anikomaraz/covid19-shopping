@@ -49,14 +49,14 @@ cor.test(data_shoppingCovid19$PSS, data_shoppingCovid19$stress_outbreak, method=
 
 
 # test H1  (The frequency of self-reported addiction-related behavioral problems increases over time (as stress becomes chronic)
-cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_shopping, method="kendall")
-cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_alcohol, method="kendall")
-cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_smoking, method="kendall")
-cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_legal_drug, method="kendall")
-cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_illegal_drug, method="kendall")
-cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_gambling, method="kendall")
-cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_gaming, method="kendall")
-cor.test(x=data_shoppingCovid19$time_days, y=data_shoppingCovid19$BAs_overeating, method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=as.numeric(data_shoppingCovid19$BAs_shopping), method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=as.numeric(data_shoppingCovid19$BAs_alcohol), method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=as.numeric(data_shoppingCovid19$BAs_smoking), method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=as.numeric(data_shoppingCovid19$BAs_legal_drug), method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=as.numeric(data_shoppingCovid19$BAs_illegal_drug), method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=as.numeric(data_shoppingCovid19$BAs_gambling), method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=as.numeric(data_shoppingCovid19$BAs_gaming), method="kendall")
+cor.test(x=data_shoppingCovid19$time_days, y=as.numeric(data_shoppingCovid19$BAs_overeating), method="kendall")
 
 
 
@@ -162,14 +162,14 @@ data_corr_stressType$stress_type <- recode(data_corr_stressType$stress_type, "1"
 
 # test H2_a  (Self-reported addiction-related behavioral problems are related to distress (=PSS) )
 for (i in BAs) {
-  r <- cor.test(x=data_shoppingCovid19$PSS, y=data_shoppingCovid19[, i], method="kendall")
+  r <- cor.test(x=data_shoppingCovid19$PSS, y=as.numeric(data_shoppingCovid19[, i]), method="kendall")
   print(i)
   print(r)
 }
 
 # test H2_b (Self-reported addiction-related behavioral problems are related to Covid19-related distress )
 for (i in BAs) {
-  r <- cor.test(x=data_shoppingCovid19$stress_outbreak, y=data_shoppingCovid19[, i], method="kendall")
+  r <- cor.test(x=data_shoppingCovid19$stress_outbreak, y=as.numeric(data_shoppingCovid19[, i]), method="kendall")
   print(i)
   print(r)
 }
