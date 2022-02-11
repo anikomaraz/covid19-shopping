@@ -46,101 +46,71 @@ data_covidCases <- data.frame(data_covidCases, days_passed)
 ggplot(data_covidCases, aes(y=cases, x=days_passed)) + geom_line()
 
 ######### prep distress/CovidStress data
-data_shoppingCovid19 <- read_rds(path="../../Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
+data_shoppingCovid19 <- read_rds(path="Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
 data_distress <- data_shoppingCovid19[, c("stress_outbreak", "time_days")]
 
 # scaling (centering) for comparability
 data_distress$stress_outbreak_cent <- scale(data_distress$stress_outbreak, center=T, scale=T)
 
 plot_distress <- 
-  ggplot(data_distress, aes(x=time_days, y=stress_outbreak)) +
+  ggplot(data = data_distress, aes(x=time_days, y=stress_outbreak)) +
   geom_smooth(color="black") +
   labs(title="COVID-related distress", 
-       x= "Time (days since the outbreak)\n between 26/03/2020 and 02/10/2020",
-       y= "stress")
+       x= "Time (days since the outbreak)\n between March 26, 2020 and October 2, 2020",
+       y= "stress")+
+  geom_rect(data = data_distress, aes(xmin = 14, xmax = 80, ymin = 5.8, ymax= 7.5), color = "#d6d698", fill = "#d6d698",
+            alpha= 0.01) +
+  geom_text(data = data_covidCases,
+            aes(x = 50, y = 7.2, label = "T1")) +
+  geom_rect(data = data_distress, aes(xmin = 81, xmax = 140, ymin = 5.8, ymax= 7.5), color = "#ADD8E6", fill = "#ADD8E6",
+            alpha= 0.01) +
+  geom_text(data = data_distress,
+            aes(x = 110, y = 7.2, label = "T2")) +
+  geom_rect(data = data_distress, aes(xmin = 141, xmax = 206, ymin = 5.8, ymax= 7.5), color = "#AFD878", fill = "#AFD878",
+            alpha= 0.01) +
+  geom_text(data = data_distress,
+            aes(x = 175, y = 7.2, label = "T3"))+
+  coord_cartesian(ylim = c(5.8, 7.5))
 
 
-## Covid19 events in US economy
-# start: 13.03.2020   President Trump issues the Proclamation on Declaring a National Emergency Concerning the Novel Coronavirus Disease (COVID-19) Outbreak, declaring a national state of emergency.[
-# 27/03 Trump’s stimulus package # President Trump signs a $2 trillion stimulus package into law 
-# The bill provides a one time payment of  a $1,200 check for individuals making up to $75,000 per year or $2,400 for couples earning less than $150,000. It also includes loans to businesses, funds unemployment insurance, bails out airlines and cargo carriers, authorizes aid to states and defers taxes, among other things
-# event_stimulus_package_day <- 30 # 09.04.2020
-# event_stimulus_package_name <- "Stimulus Package of $1,200 received"
-# 
-# # stay-at-home orders lifted # between 26 April and 13 May
-# event_lockdown_lifted_day <- 44 # 26.04.2020
-# event_lockdown_lifted_name <- "Lockdown lifting begins"
-# 
-# # The George Floyd protests begin in Minneapolis
-# event_GeorgeFloyd_day <-  74 # 26.05.2020
-# event_GeorgeFloyd_name <- "George Floyd protests begin"
-# 
-# # The House Appropriations Committee approved a measure requiring masks on public transportation
-# event_mask_day <- 123 # 14.07.2020
-# event_mask_name <- "Masks on public transport"
-# 
-# # July 28: The CDC calls for reopening American schools
-# event_schools_day <-  137 # 28.07.2020
-# event_schools_name <- "CDS calls for reopening\n  schools"
+plot_distress
 
 
-############### plot Covid19 cases
+############### plot COVID-19 cases
+
 plot_cases <- 
   ggplot() +
-  # add Covid cases
   geom_smooth(data = data_covidCases, aes(y = cases, x = days_passed), 
               color = "black", method = "loess", se=F) +
   labs(title="New Covid-19 cases", 
-       x= "Time (days since the outbreak)\n between 26/03/2020 and 02/10/2020") +
+       x= "Time (days since the outbreak)\n between March 26, 2020 and October 2, 2020") +
   scale_x_continuous(breaks = seq(0, 200, by = 20)) +
-  scale_y_continuous(n.breaks = 8)
-
-# +
-#   # add Covid19 events
-#   annotate(geom="text", x=event_stimulus_package_day + 20, y=50000, label=event_stimulus_package_name,
-#            color="red") +
-#   annotate(geom="text", x=event_lockdown_lifted_day + 21, y=40000, label=event_lockdown_lifted_name,
-#            color="red") +
-#   annotate(geom="text", x=event_mask_day + 15, y=73000, label=event_mask_name,
-#            color="red") +
-#   annotate(geom="text", x=event_GeorgeFloyd_day + 15, y=30000, label=event_GeorgeFloyd_name,
-#            color="red") +
-#   annotate(geom="text", x=event_schools_day + 32, y=63000, label=event_schools_name,
-#            color="red") +
-#   
-#   # add arrows
-#   geom_segment(aes(x = event_stimulus_package_day, y = 48000, 
-#                    xend = event_stimulus_package_day + 0.5, yend = 43000),
-#                arrow = arrow(length = unit(0.3, "cm")), color="red") + 
-#   geom_segment(aes(x = event_lockdown_lifted_day, y = 38000, 
-#                    xend = event_lockdown_lifted_day + 0.5, yend = 33000),
-#                arrow = arrow(length = unit(0.3, "cm")), color="red") + 
-#   geom_segment(aes(x = event_mask_day, y = 71000, 
-#                    xend = event_mask_day + 0.5, yend = 66000),
-#                arrow = arrow(length = unit(0.3, "cm")), color="red") +
-#   geom_segment(aes(x = event_GeorgeFloyd_day, y = 28000, 
-#                    xend = event_GeorgeFloyd_day + 0.5, yend = 23000),
-#                arrow = arrow(length = unit(0.3, "cm")), color="red") +
-#   geom_segment(aes(x = event_schools_day, y = 66000, 
-#                    xend = event_schools_day + 0.5, yend = 61000),
-#                arrow = arrow(length = unit(0.3, "cm")), color="red") +
-#   theme_pubr(legend="right")
+  scale_y_continuous(n.breaks = 8) +
+  geom_rect(data = data_covidCases, aes(xmin = 14, xmax = 80, ymin = 0, ymax= 60000), color = "#d6d698", fill = "#d6d698",
+            alpha= 0.01) +
+  geom_text(data = data_covidCases,
+            aes(x = 50, y = 5000, label = "T1")) +
+  geom_rect(data = data_covidCases, aes(xmin = 81, xmax = 140, ymin = 0, ymax= 60000), color = "#ADD8E6", fill = "#ADD8E6",
+            alpha= 0.01) +
+  geom_text(data = data_covidCases,
+            aes(x = 110, y = 5000, label = "T2")) +
+  geom_rect(data = data_covidCases, aes(xmin = 141, xmax = 206, ymin = 0, ymax= 60000), color = "#AFD878", fill = "#AFD878",
+            alpha= 0.01) +
+  geom_text(data = data_covidCases,
+            aes(x = 175, y = 5000, label = "T3"))
 
 
-######################################to-do!!!##################################
-#1) need to insert T1/T2/T3 on plot!
-####2) push to git
-######3) add to paper as png
+plot_cases
 
 
 
 # merge plot with facets
-ggarrange(plot_cases, plot_distress, ncol=1, nrow=3, 
+ggarrange(plot_cases, plot_distress, ncol=1, nrow=3, heights = c(2,2),
           common.legend = F, align = "v")
 
 
 # save plot
 ggsave(plot=last_plot(), filename="Code/Paper3_Mediation_CB_Distress/plot_cases_distress.png", 
-       width=18, height=27, units="cm") 
+       width=18, height=35, units="cm") 
 
 
