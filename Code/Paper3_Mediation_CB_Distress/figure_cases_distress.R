@@ -48,9 +48,19 @@ ggplot(data_covidCases, aes(y=cases, x=days_passed)) + geom_line()
 ######### prep distress/CovidStress data
 data_shoppingCovid19 <- read_rds(path="Data/data_shoppingCovid19_withScales_factorsAdjusted.rds")
 data_distress <- data_shoppingCovid19[, c("stress_outbreak", "time_days")]
+data_distress_buying <- data_shoppingCovid19[, c("stress_outbreak", "time_days", "COSS")]
 
 # scaling (centering) for comparability
 data_distress$stress_outbreak_cent <- scale(data_distress$stress_outbreak, center=T, scale=T)
+
+data_distress_buying$stress_outbreak_cent <- 
+  scale(data_distress_buying$stress_outbreak, center=T, scale=T)
+
+data_distress_buying$COSS_cent <- 
+  scale(data_distress_buying$COSS, center=T, scale=T)
+
+
+##############plotting
 
 plot_distress <- 
   ggplot(data = data_distress, aes(x=time_days, y=stress_outbreak)) +
@@ -60,7 +70,7 @@ plot_distress <-
        y= "stress")+
   geom_rect(data = data_distress, aes(xmin = 14, xmax = 80, ymin = 5.8, ymax= 7.5), color = "#d6d698", fill = "#d6d698",
             alpha= 0.01) +
-  geom_text(data = data_covidCases,
+  geom_text(data = data_distress,
             aes(x = 50, y = 7.2, label = "T1")) +
   geom_rect(data = data_distress, aes(xmin = 81, xmax = 140, ymin = 5.8, ymax= 7.5), color = "#ADD8E6", fill = "#ADD8E6",
             alpha= 0.01) +
@@ -75,6 +85,31 @@ plot_distress <-
 
 plot_distress
 
+#####plot buying
+
+plot_buying <- 
+  ggplot(data = data_distress_buying, aes(x=time_days, y=COSS)) +
+  geom_smooth(color="black") +
+  labs(title="Compulsive buying", 
+       x= "Time (days since the outbreak)\n between March 26, 2020 and October 2, 2020",
+       y= "COSS")+
+  geom_rect(data = data_distress_buying, aes(xmin = 14, xmax = 80, ymin = 45, ymax= 95), color = "#d6d698", fill = "#d6d698",
+            alpha= 0.01) +
+  geom_text(data = data_distress_buying,
+            aes(x = 50, y = 50, label = "T1")) +
+  geom_rect(data = data_distress_buying, aes(xmin = 81, xmax = 140, ymin = 45, ymax= 95), color = "#ADD8E6", fill = "#ADD8E6",
+            alpha= 0.01) +
+  geom_text(data = data_distress_buying,
+            aes(x = 110, y = 50, label = "T2")) +
+  geom_rect(data = data_distress_buying, aes(xmin = 141, xmax = 206, ymin = 45, ymax= 95), color = "#AFD878", fill = "#AFD878",
+            alpha= 0.01) +
+  geom_text(data = data_distress_buying,
+            aes(x = 175, y = 50, label = "T3"))+
+  coord_cartesian(ylim = c(45, 95))
+
+
+plot_buying
+
 
 ############### plot COVID-19 cases
 
@@ -82,7 +117,7 @@ plot_cases <-
   ggplot() +
   geom_smooth(data = data_covidCases, aes(y = cases, x = days_passed), 
               color = "black", method = "loess", se=F) +
-  labs(title="New Covid-19 cases", 
+  labs(title="New COVID-19 cases", 
        x= "Time (days since the outbreak)\n between March 26, 2020 and October 2, 2020") +
   scale_x_continuous(breaks = seq(0, 200, by = 20)) +
   scale_y_continuous(n.breaks = 8) +
@@ -105,11 +140,16 @@ plot_cases
 library(ggpubr)
 
 # merge plot with facets
-ggarrange(plot_cases, plot_distress, ncol=1, nrow=2,
+merged1 <- (plot_cases, plot_distress, ncol=1, nrow=2,
           common.legend = F, align = "v")
 
 
+merged2 <- ggarrange(plot_cases, plot_distress, plot_buying, ncol=1, nrow=3,
+          common.legend = F, align = "v")
+
 # save plot
-ggsave(plot=last_plot(), filename="Code/Paper3_Mediation_CB_Distress/plot_cases_distress.png") 
+ggsave(plot=merged1, filename="Code/Paper3_Mediation_CB_Distress/plot_cases_distress.png") 
+
+ggsave(plot=merged2, filename="Code/Paper3_Mediation_CB_Distress/plot_cases_distress_buying.png") 
 
 
