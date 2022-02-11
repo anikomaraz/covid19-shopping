@@ -102,15 +102,14 @@ plot_cases <-
 
 plot_cases
 
-
+library(ggpubr)
 
 # merge plot with facets
-ggarrange(plot_cases, plot_distress, ncol=1, nrow=3, heights = c(2,2),
+ggarrange(plot_cases, plot_distress, ncol=1, nrow=2,
           common.legend = F, align = "v")
 
 
 # save plot
-ggsave(plot=last_plot(), filename="Code/Paper3_Mediation_CB_Distress/plot_cases_distress.png", 
-       width=18, height=35, units="cm") 
+ggsave(plot=last_plot(), filename="Code/Paper3_Mediation_CB_Distress/plot_cases_distress.png") 
 
 
