@@ -15,3 +15,6 @@ You can also find all data and scripts of analysis on the OSF and in this repo.
 *Paper 2* focuses on compulsive buying tendencies and its relationship to income, social status and credit status during the pandemic. Our findings are the first in the scientific literature using a long-term design to find a surprisingly strong correspondance between distress and compulsive buying tendencies. This exciting paper is also already [available](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9109632/pdf/jba-11-088.pdf). 
  
 *Note: the data collection platform and automation was written in formr, and R framework. Data were analysed and visualised using R.*
+
+Sneak peak from the findings: 
+![img](covid_excessive_behav_timeline.jpg)
