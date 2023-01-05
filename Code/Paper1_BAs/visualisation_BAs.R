@@ -213,17 +213,16 @@ ggplot() +
               aes(y=stress_outbreak_cent, x=time_days, fill="Covid-19 stress (single item)"), 
               linetype="dashed", color="black", 
               span = span) +
-  scale_color_manual(values=BA_colors8) +
   labs(x="",
        y="Z-scores",
-       color="", group = "",
        title="Distress during the outbreak") +
   scale_fill_manual(name = "", values = c(BA_colors8, 
-                                          "Distress (PSS)" = "grey80", 
-                                          "Covid-19 stress (single item)" = "darkred")) +
+                                          "Distress (PSS)" = "black", 
+                                         "Covid-19 stress (single item)" = "darkred")) +
   scale_x_continuous(breaks = seq(0, 200, by = 20)) +
   theme_pubr(legend="top")
 
+plot_distress
 
 # plot Covid19 cases
 plot_cases <- 

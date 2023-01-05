@@ -187,7 +187,7 @@ plot_ses_online <- ggplot(subset(data_shoppingCovid19_ses, !is.na(SES_subj)),
   stat_boxplot(geom="errorbar", width=0.5) +
   labs(fill="",
        y="Online Shopping",
-       title="Socio-economical status", 
+       title="Sef-reported Economic Position", 
        subtitle = "How wealthy do you think you are compared to others?") +
   # # display.brewer.all(colorblindFriendly=T)
   scale_fill_brewer(type="seq", palette="BuPu", na.value="grey80") +
@@ -337,7 +337,7 @@ stress_cb_facetSES_smooth_online <- ggplot(subset(data_shoppingCovid19, !is.na(S
   geom_smooth(aes(group=SES_subj, color=SES_subj), 
               stat="smooth", se=F) +
   scale_color_manual(values=SES_colors)+
-  labs(x="Distress", y="Online Shopping", title="Socio-economical status", color ="") +
+  labs(x="Distress", y="Online Shopping", title="Self-reported Economic Position", color ="") +
   scale_fill_manual(name = "", values = c("Total" = "black")) +
   scale_y_continuous(breaks = seq(from=10, to=max(data_shoppingCovid19$COSS, na.rm = T), by=20)) +
   scale_x_continuous(breaks = seq(from=0, to=max(data_shoppingCovid19$PSS), by=5)) +
@@ -359,7 +359,7 @@ stress_cb_facetSES_smooth_offline <- ggplot(subset(data_shoppingCovid19, !is.na(
   geom_smooth(aes(group=SES_subj, color=SES_subj), stat="smooth", se=F) +
   # display.brewer.all(colorblindFriendly=T)
   scale_color_manual(values=SES_colors)+
-  labs(x="Distress", y="Offline Shopping", title="Socio-economical status", color = "") +
+  labs(x="Distress", y="Offline Shopping", title="Self-reported Economic Position", color = "") +
   scale_fill_manual(name = "", values = c("Total" = "black")) +
   scale_y_continuous(breaks = seq(from=10, to=max(data_shoppingCovid19$BERGEN, na.rm = T), by=20)) +
   scale_x_continuous(breaks = seq(from=0, to=max(data_shoppingCovid19$PSS), by=5)) +
@@ -563,18 +563,20 @@ ggsave(plot=last_plot(), filename="Figures/Income/spend_over_time_ses_catMerged.
 data_cb_over_time <- data_shoppingCovid19[, c("SES_subj", "COSS", "BERGEN", "time_days")]
 data_cb_over_time <- subset(data_cb_over_time, !is.na(SES_subj))
 
-data_cb_over_time$SES_subj <- dplyr::recode(data_cb_over_time$SES_subj, 
-                                                                 "Poorest" = "Poorest, Poorer or Poor", 
-                                                                 "Poorer" = "Poorest, Poorer or Poor", 
-                                                                 "Poor" = "Poorest, Poorer or Poor", 
-                                                                 "Average" = "Average",
-                                                                 "Richest" = "Richest, Richer or Rich", 
-                                                                 "Richer" = "Richest, Richer or Rich", 
-                                                                 "Rich" ="Richest, Richer or Rich")
+data_cb_over_time$SES_subj <- recode(data_cb_over_time$SES_subj, 
+                                                                 "poorest" = "Poorest, Poorer or Poor \n(Low-EP)", 
+                                                                 "poorer" = "Poorest, Poorer or Poor \n(Low-EP)", 
+                                                                 "poor" = "Poorest, Poorer or Poor \n(Low-EP)", 
+                                                                 "average" = "Average \n(Average-EP)",
+                                                                 "richest" = "Richest, Richer or Rich \n(High-EP)", 
+                                                                 "richer" = "Richest, Richer or Rich \n(High-EP)", 
+                                                                 "rich" ="Richest, Richer or Rich \n(High-EP)")
+levels(data_cb_over_time$SES_subj)
+
 data_cb_over_time_melt <- melt(data_cb_over_time, id=c("SES_subj", "time_days"), variable="shop_type")
 
 # set span for plotting
-span = 0.4
+span = 0.2
 
 # plot online shopping
 cb_over_time_online <- 
@@ -591,7 +593,7 @@ ggplot(subset(data_cb_over_time_melt, shop_type == "COSS"), aes(x=time_days, y=v
        color="", group="", fill="", 
        title= "Online shopping") +
   scale_fill_manual(name = "", values = c(SES_colors_3cat, "black")) +
-  scale_color_manual(values=SES_colors_3cat) +
+  scale_color_manual(name = "", values=SES_colors_3cat) +
   scale_y_continuous(breaks = seq(20, 120, by=20)) +
   # scale_x_continuous(breaks = seq(10, 220, by=20)) +
   theme_pubr() 
@@ -636,7 +638,7 @@ ggarrange(cb_over_time_online, cb_over_time_offline,
 
 # save plot
 ggsave(plot=last_plot(), filename="Figures/Income/cb_over_time_combi.png", 
-       width=17, height=33, units = "cm")
+       width=19, height=33, units = "cm")
 
 
 
